@@ -1,0 +1,18 @@
+{{ template "header.tmpl" .}}
+<section class="excerpt-top">
+	home to <span class="count">{{.instance.Stats.user_count}}</span> users
+		who posted <span class="count">{{.instance.Stats.status_count}}</span> statuses,
+		federating with  <span class="count">{{.instance.Stats.domain_count}}</span> other instances.
+</section>
+<main class="lightgray">
+	<section>
+		<div className="short-description" style="text-align: center;">
+          <p><a href="https://the.kalaclista.com/nyarla/">にゃるらコト岡村直樹</a>の個人用 Fediverse です</p>
+          <p>色々調整中なので所々壊れている可能性があります</p>
+          <hr />
+          <p><strong>アカウント</strong></p>
+          <p><a href="https://kalaclista.com/@nyarla">@nyarla@kalaclista.com</p> 
+		</div>
+	</section>
+</main>
+{{ template "footer.tmpl" .}}

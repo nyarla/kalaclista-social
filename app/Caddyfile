@@ -1,0 +1,25 @@
+{
+  auto_https off
+}
+
+http://kalaclista.com,
+http://kalaclista-social.fly.dev,
+http://* {
+  encode zstd gzip
+
+  root * /app/web/public
+
+  @nonStatic {
+    not {
+      file {
+        try_files {path}
+      }
+    }
+  }
+
+  reverse_proxy @nonStatic http://127.0.0.1:9999 {
+    flush_interval -1
+  }
+
+  file_server
+}

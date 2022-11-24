@@ -1,0 +1,23 @@
+application-name: "カラクリスタ？"
+
+host: "kalaclista.com"
+account-domain: "kalaclista.com"
+protocol: "https"
+bind-address: "0.0.0.0"
+port: 9999
+
+db-type: "sqlite"
+db-address: "/data/sqlite3.db"
+
+web-template-base-dir: "/app/web/template"
+web-assets-base-dir: "/app/web/public/assets"
+
+accounts-registration-open: false
+
+accounts-allow-custom-css: true
+
+storage-backend: "s3"
+
+trusted-proxies:
+  - "127.0.0.1"
+  - "172.16.0.0/12"

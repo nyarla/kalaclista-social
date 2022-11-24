@@ -1,0 +1,2 @@
+caddy: /app/bin/caddy run --config /app/Caddyfile
+gotosocial: /app/bin/gotosocial --config-path=/app/config.yaml server start

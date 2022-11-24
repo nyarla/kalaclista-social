@@ -1,0 +1,4 @@
+!app/bin/.gitkeep
+.env
+app/bin/*
+data
