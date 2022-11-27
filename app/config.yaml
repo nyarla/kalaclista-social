@@ -17,6 +17,7 @@ accounts-registration-open: false
 accounts-allow-custom-css: true
 
 storage-backend: "s3"
+storage-s3-proxy: true
 
 trusted-proxies:
   - "127.0.0.1"
