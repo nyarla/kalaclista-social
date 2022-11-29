@@ -5,7 +5,7 @@ RUN mkdir -p /go
 
 WORKDIR /go
 
-RUN go install github.com/superseriousbusiness/gotosocial/cmd/gotosocial@da8954858afb4d5a3a2faf55e77d7da3be0ea3db
+RUN go install github.com/superseriousbusiness/gotosocial/cmd/gotosocial@c534230600002e8ba9fefcc56908897067038dec
 
 FROM node:16.15.1-alpine3.15 AS bundler
 
@@ -15,7 +15,7 @@ RUN git clone https://github.com/superseriousbusiness/gotosocial \
     && git reset --hard da8954858afb4d5a3a2faf55e77d7da3be0ea3db
 RUN cd gotosocial \
     && yarn install --cwd web/source \
-    && BUDO_BUILD=0 node web/source \
+    && BUDO_BUILD=1 node web/source \
     && rm -rf gotosocialweb/source
 
 FROM gcr.io/distroless/python3-debian11
