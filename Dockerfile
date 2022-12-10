@@ -2,17 +2,18 @@ FROM golang:1.19.3 as builder
 
 ENV GOPATH /go
 RUN mkdir -p /go
+ENV REV 04636a3ba3b16d0f55f4c955e51ab78cfa53c890
 
 WORKDIR /go
 
-RUN go install github.com/superseriousbusiness/gotosocial/cmd/gotosocial@c534230600002e8ba9fefcc56908897067038dec
+RUN go install github.com/superseriousbusiness/gotosocial/cmd/gotosocial@$REV
 
 FROM node:16.15.1-alpine3.15 AS bundler
 
 RUN apk add git
 RUN git clone https://github.com/superseriousbusiness/gotosocial \
     && cd gotosocial \
-    && git reset --hard da8954858afb4d5a3a2faf55e77d7da3be0ea3db
+    && git reset --hard $REV
 RUN cd gotosocial \
     && yarn install --cwd web/source \
     && BUDO_BUILD=1 node web/source \
