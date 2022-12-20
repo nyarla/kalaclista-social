@@ -2,7 +2,7 @@ all:
 	@echo hi,
 
 deploy:
-	flyctl deploy
+	flyctl deploy --local-only
 
 build:
 	docker build -t kalaclista-social .
@@ -12,11 +12,10 @@ test:
 		--mount type=bind,source=$(shell pwd)/data,destination=/data \
 		--env-file .env -p 1313:80 kalaclista-social:latest
 
-_goremon:
-	curl -L https://github.com/mattn/goreman/releases/download/v$(VERSION)/goreman_v$(VERSION)_$(OS)_$(ARCH).tar.gz \
-		| tar -zxv -C tmp 
-	cp tmp/goreman_v$(VERSION)_$(OS)_$(ARCH)/goreman app/bin/goreman
-	rm -rf tmp/*
+_overmind:
+	curl -L https://github.com/DarthSim/overmind/releases/download/v$(VERSION)/overmind-v$(VERSION)-$(OS)-$(ARCH).gz >tmp/overmind.gz
+	cd tmp && gzip -d overmind.gz && mv overmind ../app/bin/
+	chmod +x app/bin/overmind
 
 _caddy:
 	curl -L https://github.com/caddyserver/caddy/releases/download/v$(VERSION)/caddy_$(VERSION)_$(OS)_$(ARCH).tar.gz \
@@ -26,10 +25,10 @@ _caddy:
 
 binary: \
 	caddy \
-	goreman
+	overmind
 
-goreman:
-	@$(MAKE) _goremon VERSION=0.3.13 OS=linux ARCH=amd64
+overmind:
+	@$(MAKE) _overmind VERSION=2.3.0 OS=linux ARCH=amd64
 
 caddy:
 	@$(MAKE) _caddy VERSION=2.6.2 OS=linux ARCH=amd64
