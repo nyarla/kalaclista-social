@@ -2,7 +2,7 @@ FROM golang:1.19.3 as builder
 
 ENV GOPATH /go
 RUN mkdir -p /go
-ENV REV 04636a3ba3b16d0f55f4c955e51ab78cfa53c890
+ENV REV b375d3b5d68e462a53cd44a0fcee43c1713acedb
 
 WORKDIR /go
 
@@ -31,6 +31,7 @@ COPY --from=bundler /gotosocial/web/template/ /app/web/template/
 
 COPY app/web/assets/logo.png /app/web/public/assets/logo.png
 COPY app/web/assets/index.tmpl /app/web/template/index.tmpl
+COPY app/litestream.yaml /etc/litestream.yml
 
 WORKDIR /app
 ENTRYPOINT ["/app/bin/overmind", "start"]

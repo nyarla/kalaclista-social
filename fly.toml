@@ -4,7 +4,7 @@ kill_signal  = "SIGTERM"
 kill_timeout = 5
 
 [build]
-  dockerfile = "Dockerfile"
+  image = "registry.fly.io/kalaclista-social:latest"
 
 [deploy]
   strategy = "rolling"
@@ -15,7 +15,7 @@ kill_timeout = 5
 
 [[services]]
   http_checks = []
-  internal_port = 80
+  internal_port = 8888
   protocol = "tcp"
   script_checks = []
 

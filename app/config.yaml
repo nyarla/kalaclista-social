@@ -8,6 +8,8 @@ port: 9999
 
 db-type: "sqlite"
 db-address: "/data/sqlite3.db"
+db-sqlite-journal-mode: "WAL"
+db-sqlite-synchronous: "NORMAL"
 
 web-template-base-dir: "/app/web/template"
 web-assets-base-dir: "/app/web/public/assets"

@@ -2,15 +2,24 @@ all:
 	@echo hi,
 
 deploy:
-	flyctl deploy --local-only
+	podman login -u x -p $(shell flyctl auth token) registry.fly.io/kalaclista-social
+	podman build -t kalaclista-social:latest .
+	podman push --format v2s2 kalaclista-social docker://registry.fly.io/kalaclista-social:latest
+	flyctl deploy
 
 build:
-	docker build -t kalaclista-social .
+	podman build -t kalaclista-social .
 
 test:
-	docker run \
+	podman run \
 		--mount type=bind,source=$(shell pwd)/data,destination=/data \
-		--env-file .env -p 1313:80 kalaclista-social:latest
+		--env-file .env -p 1313:8888 kalaclista-social:latest
+
+_litestream:
+	curl -L https://github.com/benbjohnson/litestream/releases/download/v$(VERSION)/litestream-v$(VERSION)-$(OS)-$(ARCH)-static.tar.gz \
+		| tar -zxv -C tmp
+	cp tmp/litestream app/bin/litestream
+	rm -rf tmp/*
 
 _overmind:
 	curl -L https://github.com/DarthSim/overmind/releases/download/v$(VERSION)/overmind-v$(VERSION)-$(OS)-$(ARCH).gz >tmp/overmind.gz
@@ -26,6 +35,9 @@ _caddy:
 binary: \
 	caddy \
 	overmind
+
+litestream:
+	@$(MAKE) _litestream VERSION=0.3.9 OS=linux ARCH=amd64
 
 overmind:
 	@$(MAKE) _overmind VERSION=2.3.0 OS=linux ARCH=amd64
