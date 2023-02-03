@@ -34,7 +34,8 @@ _caddy:
 
 binary: \
 	caddy \
-	overmind
+	overmind \
+	litestream
 
 litestream:
 	@$(MAKE) _litestream VERSION=0.3.9 OS=linux ARCH=amd64
