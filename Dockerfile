@@ -1,8 +1,8 @@
-FROM golang:1.19.3 as builder
+FROM golang:1.19.5 as builder
 
 ENV GOPATH /go
 RUN mkdir -p /go
-ENV REV b375d3b5d68e462a53cd44a0fcee43c1713acedb
+ENV REV 271da016b91d8d575e13be03b440f970cd333ebe
 
 WORKDIR /go
 
