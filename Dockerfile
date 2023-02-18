@@ -2,7 +2,7 @@ FROM golang:1.19.5 as builder
 
 ENV GOPATH /go
 RUN mkdir -p /go
-ENV REV 0ed50c172e9a02788852e22fa5835d0746456ce7
+ENV REV b4d18887d3deec8556f8b2de2369a768df01eb29
 
 WORKDIR /go
 
