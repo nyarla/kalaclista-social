@@ -44,4 +44,4 @@ overmind:
 	@$(MAKE) _overmind VERSION=2.4.0 OS=linux ARCH=amd64
 
 caddy:
-	@$(MAKE) _caddy VERSION=2.6.2 OS=linux ARCH=amd64
+	@$(MAKE) _caddy VERSION=2.6.3 OS=linux ARCH=amd64
