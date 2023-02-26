@@ -2,7 +2,8 @@ FROM golang:1.19.5 as builder
 
 ENV GOPATH /go
 RUN mkdir -p /go
-ENV REV b4d18887d3deec8556f8b2de2369a768df01eb29
+
+ARG REV
 
 WORKDIR /go
 
@@ -10,14 +11,18 @@ RUN go install github.com/superseriousbusiness/gotosocial/cmd/gotosocial@$REV
 
 FROM node:16.15.1-alpine3.15 AS bundler
 
+ARG REV
+
 RUN apk add git
 RUN git clone https://github.com/superseriousbusiness/gotosocial \
     && cd gotosocial \
     && git reset --hard $REV
 RUN cd gotosocial \
-    && yarn install --cwd web/source \
-    && BUDO_BUILD=1 node web/source \
-    && rm -rf gotosocialweb/source
+    && cd web/source \
+    && yarn install \
+    && BUDO_BUILD=1 node index.js \
+    && cd ../../ \
+    && rm -rf web/source
 
 FROM debian:11-slim
 RUN apt-get update && apt-get install -y tmux ca-certificates && rm -rf /var/lib/apt/lists/*
