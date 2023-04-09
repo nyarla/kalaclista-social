@@ -3,7 +3,7 @@ all:
 
 deploy:
 	podman login -u x -p $(shell flyctl auth token) registry.fly.io/kalaclista-social
-	podman build --build-arg REV=0746ef741a51bd8f92ca5e07dfb9f35b66f4cf06 -t kalaclista-social:latest .
+	podman build --build-arg REV=f28ed21343270bd91f1b5044e9013db3e1a6c64b -t kalaclista-social:latest .
 	podman push --format v2s2 kalaclista-social docker://registry.fly.io/kalaclista-social:latest
 	flyctl deploy
 
