@@ -1,45 +1,45 @@
 app = "kalaclista-social-v2"
 primary_region = "nrt"
 
-kill_signal  = "SIGTERM"
+kill_signal = "SIGTERM"
 kill_timeout = 5
 
 [build]
-  image = "registry.fly.io/kalaclista-social:latest"
+image = "registry.fly.io/kalaclista-social:latest"
 
 [deploy]
-  strategy = "rolling"
+strategy = "rolling"
 
 [experimental]
-  allowed_public_ports = []
-  auto_rollback = true
+allowed_public_ports = []
+auto_rollback = true
 
 [[services]]
-  http_checks = []
-  internal_port = 8888
-  protocol = "tcp"
-  script_checks = []
+http_checks = []
+internal_port = 8888
+protocol = "tcp"
+script_checks = []
 
-  [services.concurrency]
-    hard_limit = 25
-    soft_limit = 20
-    type = "connections"
+[services.concurrency]
+hard_limit = 25
+soft_limit = 20
+type = "connections"
 
-  [[services.ports]]
-    force_https = true
-    handlers = ["http"]
-    port = 80
+[[services.ports]]
+force_https = true
+handlers = ["http"]
+port = 80
 
-  [[services.ports]]
-    handlers = ["tls", "http"]
-    port = 443
+[[services.ports]]
+handlers = ["tls", "http"]
+port = 443
 
-  [[services.tcp_checks]]
-    grace_period = "1s"
-    interval = "15s"
-    restart_limit = 0
-    timeout = "2s"
+[[services.tcp_checks]]
+grace_period = "1s"
+interval = "15s"
+restart_limit = 0
+timeout = "2s"
 
 [[mounts]]
-  destination = "/data"
-  source = "kalaclista_social_data"
+destination = "/data"
+source = "kalaclista_social_data"
