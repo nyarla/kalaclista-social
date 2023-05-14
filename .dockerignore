@@ -2,7 +2,6 @@
 .env
 .git
 .gitignore
-Dockerfile
 LICENSE
 Makefile
 app/LICENSE

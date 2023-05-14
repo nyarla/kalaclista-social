@@ -1,17 +1,14 @@
 all:
 	@echo hi,
 
-deploy:
-	podman login -u x -p $(shell flyctl auth token) registry.fly.io/kalaclista-social
-	podman build --build-arg REV=f28ed21343270bd91f1b5044e9013db3e1a6c64b -t kalaclista-social:latest .
-	podman push --format v2s2 kalaclista-social docker://registry.fly.io/kalaclista-social:latest
-	flyctl deploy
+up:
+	flyctl deploy -a kalaclista-social-v2 --local-only --image-label latest --build-arg REV=89dcbd5a201f830812e49ed5d8e37c00d16b838b
 
 build:
-	podman build -t kalaclista-social .
+	docker build -t kalaclista-social .
 
 test:
-	podman run \
+	docker run \
 		--mount type=bind,source=$(shell pwd)/data,destination=/data \
 		--env-file .env -p 1313:8888 kalaclista-social:latest
 

@@ -4,9 +4,6 @@ primary_region = "nrt"
 kill_signal = "SIGTERM"
 kill_timeout = 5
 
-[build]
-image = "registry.fly.io/kalaclista-social:latest"
-
 [deploy]
 strategy = "rolling"
 
