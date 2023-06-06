@@ -22,9 +22,14 @@ build:
 		.
 
 test:
+	sed -i 's/litestream/#litestream/' app/Procfile
 	docker run \
 		--mount type=bind,source=$(shell pwd)/data,destination=/data \
-		--env-file .env -p 1313:8888 kalaclista-social:latest
+		--env-file .env -p 1313:8888 kalaclista-social:latest || true
+
+pull:
+	rm -rf data/sqlite3.db
+	fly ssh sftp get /data/sqlite3.db data/sqlite3.db
 
 _litestream:
 	curl -L https://github.com/benbjohnson/litestream/releases/download/v$(VERSION)/litestream-v$(VERSION)-$(OS)-$(ARCH)-static.tar.gz \
