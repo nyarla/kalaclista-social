@@ -62,7 +62,6 @@ COPY --from=web /go/$GIT_PATH/$GIT_REPO/web/assets    /app/web/public/assets/
 COPY --from=web /go/$GIT_PATH/$GIT_REPO/web/template/ /app/web/template/
 
 COPY app/web/assets/logo.png    /app/web/public/assets/logo.png
-COPY app/web/assets/index.tmpl  /app/web/template/index.tmpl
 COPY app/litestream.yaml        /etc/litestream.yml
 
 ENV PATH=/app/bin:$PATH
