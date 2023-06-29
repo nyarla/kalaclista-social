@@ -1,7 +1,7 @@
 GIT_PATH := github.com/superseriousbusiness
 GIT_REPO := gotosocial
 GIT_CMD  := cmd/gotosocial
-GIT_REV  := b401bd1ccbce7fa547c75e9f0ae89e211112c1bb
+GIT_REV  := 2a40c81f105d592ee474dd28fe8a7fdc31cb73f1
 
 all:
 	@echo hi,
