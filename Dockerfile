@@ -4,7 +4,7 @@ FROM alpine:edge as repo
 ARG GIT_PATH
 ARG GIT_REPO
 
-RUN apk add git=2.41.0-r0 --no-cache --update && mkdir -p /go/$GIT_PATH/$GIT_REPO
+RUN apk add git=2.41.0-r1 --no-cache --update && mkdir -p /go/$GIT_PATH/$GIT_REPO
 
 ARG GIT_REV
 
@@ -41,8 +41,8 @@ ARG GIT_CMD
 
 WORKDIR /go/$GIT_PATH/$GIT_REPO
 RUN go mod download
-WORKDIR /go/$GIT_PATH/$GIT_REPO/$GIT_CMD
-RUN go install .
+WORKDIR /go/$GIT_PATH/$GIT_REPO
+RUN VERSION=dev ./scripts/build.sh
 
 # build runnin environment
 FROM debian:11-slim
@@ -56,9 +56,9 @@ RUN   apt-get update  \
 
 COPY app /app
 
-COPY --from=bin /go/bin/gotosocial /app/bin/gotosocial 
+COPY --from=bin /go/${GIT_PATH}/${GIT_REPO}/gotosocial /app/bin/gotosocial
 
-COPY --from=web /go/$GIT_PATH/$GIT_REPO/web/assets    /app/web/public/assets/
+COPY --from=web /go/$GIT_PATH/$GIT_REPO/web/assets/   /app/web/public/assets/
 COPY --from=web /go/$GIT_PATH/$GIT_REPO/web/template/ /app/web/template/
 
 COPY app/web/assets/logo.png    /app/web/public/assets/logo.png
