@@ -1,7 +1,6 @@
-GIT_PATH := github.com/superseriousbusiness
-GIT_REPO := gotosocial
-GIT_CMD  := cmd/gotosocial
-GIT_REV  := 6dbb8ba7aaa91bd865a408d8a9a87c70ad0bac84
+GIT_PATH := github.com/nyarla
+GIT_REPO := gotosocial-modified
+GIT_REV  := 600954e6e35d9b859810cedb0247a4aa5276154b
 
 all:
 	@echo hi,
@@ -10,14 +9,12 @@ up:
 	flyctl deploy -a kalaclista-social-v2 --local-only --image-label latest \
 		--build-arg GIT_PATH=$(GIT_PATH) \
 		--build-arg GIT_REPO=$(GIT_REPO) \
-		--build-arg GIT_CMD=$(GIT_CMD) \
 		--build-arg GIT_REV=$(GIT_REV)
 
 build:
 	docker build -t kalaclista-social 	\
 		--build-arg GIT_PATH=$(GIT_PATH) \
 		--build-arg GIT_REPO=$(GIT_REPO) \
-		--build-arg GIT_CMD=$(GIT_CMD) \
 		--build-arg GIT_REV=$(GIT_REV) \
 		.
 
