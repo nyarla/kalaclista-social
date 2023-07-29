@@ -1,70 +1,61 @@
 # fetch git repository
-FROM alpine:edge as repo
+FROM alpine:edge as src
+
+RUN apk add git=2.41.0-r2 --no-cache --update && mkdir -p /go/$GIT_PATH/$GIT_REPO
+RUN mkdir -p /build
+
+WORKDIR /build
 
 ARG GIT_PATH
 ARG GIT_REPO
-
-RUN apk add git=2.41.0-r1 --no-cache --update && mkdir -p /go/$GIT_PATH/$GIT_REPO
-
 ARG GIT_REV
 
-WORKDIR /go/$GIT_PATH/$GIT_REPO
-RUN   git init \
-  &&  git remote add origin https://$GIT_PATH/$GIT_REPO.git \
-  &&  git fetch origin $GIT_REV \
-  &&  git reset --hard FETCH_HEAD
+RUN git init \
+  && git remote add origin https://$GIT_PATH/$GIT_REPO.git \
+  && git fetch --depth 1 origin $GIT_REV \
+  && git reset --hard $GIT_REV \
+  && rm -rf .git
 
 # build web frontend
 FROM node:16.19.1-alpine3.17 as web
+COPY --from=src /build/web /build/web/
 
-ARG GIT_PATH
-ARG GIT_REPO
-ARG GIT_CMD
-ARG GIT_REV
-
-COPY --from=repo /go/ /go/
-WORKDIR /go/$GIT_PATH/$GIT_REPO/web/source
-
-RUN yarn install && BUDO_BUILD=1 node index.js
-
-WORKDIR /go/$GIT_PATH/$GIT_REPO
-RUN rm -rf web/source
+WORKDIR /build/web
+RUN cd source \
+  && yarn install \
+  && BUDO_BUILD=1 node index.js \
+  && cd .. \
+  && rm -rf source
 
 # build go executable binary
-FROM golang:1.19.5 as bin
+FROM golang:1.19.5 as binary
 
-COPY --from=repo /go/ /go/
+RUN mkdir -p /build
+WORKDIR /build
 
-ARG GIT_PATH
-ARG GIT_REPO
-ARG GIT_CMD
+COPY --from=src /build /build/
 
-WORKDIR /go/$GIT_PATH/$GIT_REPO
-RUN go mod download
-WORKDIR /go/$GIT_PATH/$GIT_REPO
-RUN VERSION=dev ./scripts/build.sh
+RUN go mod download \
+  && VERSION=kalaclista-600954e ./scripts/build.sh
 
 # build runnin environment
 FROM debian:11-slim
-
-ARG GIT_PATH
-ARG GIT_REPO
 
 RUN   apt-get update  \
   &&  apt-get install -y tmux=3.1c-1+deb11u1 ca-certificates=20210119 --no-install-recommends \
   &&  rm -rf /var/lib/apt/lists/*
 
-COPY app /app
+RUN mkdir -p /app
+WORKDIR /app
 
-COPY --from=bin /go/${GIT_PATH}/${GIT_REPO}/gotosocial /app/bin/gotosocial
-
-COPY --from=web /go/$GIT_PATH/$GIT_REPO/web/assets/   /app/web/public/assets/
-COPY --from=web /go/$GIT_PATH/$GIT_REPO/web/template/ /app/web/template/
+COPY app .
+COPY --from=binary /build/gotosocial /app/bin/gotosocial
+COPY --from=web /build/web/assets /app/web/public/assets/
+COPY --from=web /build/web/template /app/web/template/
 
 COPY app/web/assets/logo.png    /app/web/public/assets/logo.png
 COPY app/litestream.yaml        /etc/litestream.yml
 
 ENV PATH=/app/bin:$PATH
 
-WORKDIR /app
 ENTRYPOINT ["overmind", "start"]
