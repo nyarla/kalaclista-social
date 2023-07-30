@@ -1,6 +1,6 @@
 GIT_PATH := github.com/nyarla
 GIT_REPO := gotosocial-modified
-GIT_REV  := 600954e6e35d9b859810cedb0247a4aa5276154b
+GIT_REV  := 9a99a0bc53fa82a4be650eead7dabdb5b84684b1
 
 all:
 	@echo hi,

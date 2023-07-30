@@ -30,13 +30,15 @@ RUN cd source \
 # build go executable binary
 FROM golang:1.19.5 as binary
 
+ARG GIT_REV
+
 RUN mkdir -p /build
 WORKDIR /build
 
 COPY --from=src /build /build/
 
 RUN go mod download \
-  && VERSION=kalaclista-600954e ./scripts/build.sh
+  && VERSION=kalaclista-"$(echo "$GIT_REV" | cut -c 1-7)" ./scripts/build.sh
 
 # build runnin environment
 FROM debian:11-slim

@@ -20,6 +20,8 @@ accounts-registration-open: false
 
 accounts-allow-custom-css: true
 
+kalaclista-allowed-unauthorized-get: true
+
 storage-backend: "s3"
 storage-s3-proxy: true
 
