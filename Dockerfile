@@ -1,7 +1,7 @@
 # fetch git repository
 FROM alpine:edge as src
 
-RUN apk add git=2.41.0-r2 --no-cache --update && mkdir -p /go/$GIT_PATH/$GIT_REPO
+RUN apk add git=2.42.0-r0 --no-cache --update && mkdir -p /go/$GIT_PATH/$GIT_REPO
 RUN mkdir -p /build
 
 WORKDIR /build
@@ -28,7 +28,7 @@ RUN cd source \
   && rm -rf source
 
 # build go executable binary
-FROM golang:1.19.5 as binary
+FROM golang:1.20.7 as binary
 
 ARG GIT_REV
 
@@ -37,8 +37,7 @@ WORKDIR /build
 
 COPY --from=src /build /build/
 
-RUN go mod download \
-  && VERSION=kalaclista-"$(echo "$GIT_REV" | cut -c 1-7)" ./scripts/build.sh
+RUN VERSION=kalaclista-"$(echo "$GIT_REV" | cut -c 1-7)" ./scripts/build.sh
 
 # build runnin environment
 FROM debian:11-slim
