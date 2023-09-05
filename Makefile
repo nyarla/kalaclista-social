@@ -29,7 +29,7 @@ pull:
 	fly ssh sftp get /data/sqlite3.db data/sqlite3.db
 
 _litestream:
-	curl -L https://github.com/benbjohnson/litestream/releases/download/v$(VERSION)/litestream-v$(VERSION)-$(OS)-$(ARCH)-static.tar.gz \
+	curl -L https://github.com/benbjohnson/litestream/releases/download/v$(VERSION)/litestream-v$(VERSION)-$(OS)-$(ARCH).tar.gz \
 		| tar -zxv -C tmp
 	cp tmp/litestream app/bin/litestream
 	rm -rf tmp/*
@@ -51,10 +51,10 @@ binary: \
 	litestream
 
 litestream:
-	@$(MAKE) _litestream VERSION=0.3.9 OS=linux ARCH=amd64
+	@$(MAKE) _litestream VERSION=0.3.11 OS=linux ARCH=amd64
 
 overmind:
 	@$(MAKE) _overmind VERSION=2.4.0 OS=linux ARCH=amd64
 
 caddy:
-	@$(MAKE) _caddy VERSION=2.6.4 OS=linux ARCH=amd64
+	@$(MAKE) _caddy VERSION=2.7.3 OS=linux ARCH=amd64
