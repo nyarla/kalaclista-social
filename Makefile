@@ -1,6 +1,6 @@
 GIT_PATH := github.com/nyarla
 GIT_REPO := gotosocial-modified
-GIT_REV  := 82215ac85b6ee85cd65408362637e91ff8329c69
+GIT_REV  := c962d5a52d78265be025c7752fcd223b20628bb0
 
 all:
 	@echo hi,
@@ -57,4 +57,4 @@ overmind:
 	@$(MAKE) _overmind VERSION=2.4.0 OS=linux ARCH=amd64
 
 caddy:
-	@$(MAKE) _caddy VERSION=2.7.3 OS=linux ARCH=amd64
+	@$(MAKE) _caddy VERSION=2.7.4 OS=linux ARCH=amd64
