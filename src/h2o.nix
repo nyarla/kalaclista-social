@@ -34,7 +34,7 @@
           "proxy.tunnel" = "ON";
           "proxy.connect" = [ "+127.0.0.1" "+172.16.0.0/12" ];
           "proxy.timeout.keepalive" = 0;
-          "proxy.timeout.io" = 1209600;
+          "proxy.timeout.io" = 31536000;
         };
       };
     };
