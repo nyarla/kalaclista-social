@@ -87,9 +87,9 @@ This repository excepts some files is under the [AGPL](LICENSE)
 
 Excepts files are as:
 
-- <web/logo.png>
+- [web/www/logo.png](web/www/logo.png)
   - this file is the my avatar icon, and all rights reserved.
-- <web/ads.txt>
+- [web/www/ads.txt](web/www/ads.txt)
   - this file is metadata file for google adsense on my website. you chould not use.
 
 ## Author
