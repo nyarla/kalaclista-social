@@ -1,60 +1,29 @@
-GIT_PATH := github.com/nyarla
-GIT_REPO := gotosocial-modified
-GIT_REV  := c962d5a52d78265be025c7752fcd223b20628bb0
+OWNER := nyarla
+REPO := gotosocial-modified
+REV := c962d5a52d78265be025c7752fcd223b20628bb0
+VERSION := kalaclista
 
 all:
 	@echo hi,
 
-up:
+up: build
 	flyctl deploy -a kalaclista-social-v2 --local-only --image-label latest \
-		--build-arg GIT_PATH=$(GIT_PATH) \
-		--build-arg GIT_REPO=$(GIT_REPO) \
-		--build-arg GIT_REV=$(GIT_REV)
+		--build-arg GITHUB_GOTOSOCIAL_OWNER=$(OWNER) \
+		--build-arg GITHUB_GOTOSOCIAL_REPOSITORY=$(REPO) \
+		--build-arg GITHUB_GOTOSOCIAL_REVISION=$(REV) \
+		--build-arg GITHUB_GOTOSOCIAL_VERSION=$(VERSION)
 
 build:
-	docker build -t kalaclista-social 	\
-		--build-arg GIT_PATH=$(GIT_PATH) \
-		--build-arg GIT_REPO=$(GIT_REPO) \
-		--build-arg GIT_REV=$(GIT_REV) \
+	nix eval --json --file src/h2o.nix >runtime/h2o.json
+	nix eval --json --file src/gotosocial.nix >runtime/gotosocial.json
+	nix eval --json --file src/litestream.nix >runtime/litestream.json
+	docker build -t kalaclista-social-v2_1 \
+		--build-arg GITHUB_GOTOSOCIAL_OWNER=$(OWNER) \
+		--build-arg GITHUB_GOTOSOCIAL_REPOSITORY=$(REPO) \
+		--build-arg GITHUB_GOTOSOCIAL_REVISION=$(REV) \
+		--build-arg GITHUB_GOTOSOCIAL_VERSION=$(VERSION) \
 		.
-
-test:
-	sed -i 's/litestream/#litestream/' app/Procfile
-	docker run \
-		--mount type=bind,source=$(shell pwd)/data,destination=/data \
-		--env-file .env -p 1313:8888 kalaclista-social:latest || true
 
 pull:
 	rm -rf data/sqlite3.db
 	fly ssh sftp get /data/sqlite3.db data/sqlite3.db
-
-_litestream:
-	curl -L https://github.com/benbjohnson/litestream/releases/download/v$(VERSION)/litestream-v$(VERSION)-$(OS)-$(ARCH).tar.gz \
-		| tar -zxv -C tmp
-	cp tmp/litestream app/bin/litestream
-	rm -rf tmp/*
-
-_overmind:
-	curl -L https://github.com/DarthSim/overmind/releases/download/v$(VERSION)/overmind-v$(VERSION)-$(OS)-$(ARCH).gz >tmp/overmind.gz
-	cd tmp && gzip -d overmind.gz && mv overmind ../app/bin/
-	chmod +x app/bin/overmind
-
-_caddy:
-	curl -L https://github.com/caddyserver/caddy/releases/download/v$(VERSION)/caddy_$(VERSION)_$(OS)_$(ARCH).tar.gz \
-		| tar -zxv -C tmp
-	cp tmp/caddy app/bin/caddy
-	rm -rf tmp/*
-
-binary: \
-	caddy \
-	overmind \
-	litestream
-
-litestream:
-	@$(MAKE) _litestream VERSION=0.3.11 OS=linux ARCH=amd64
-
-overmind:
-	@$(MAKE) _overmind VERSION=2.4.0 OS=linux ARCH=amd64
-
-caddy:
-	@$(MAKE) _caddy VERSION=2.7.4 OS=linux ARCH=amd64

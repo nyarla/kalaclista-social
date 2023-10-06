@@ -1,4 +1,11 @@
-!app/bin/.gitkeep
-.env
-app/bin/*
-data
+*
+!.dockerignore
+!.gitignore
+!Dockerfile
+!LICENSE
+!Makefile
+!README.md
+!fly.toml
+!**/runtime/Procfile
+!**/src
+!**/web
