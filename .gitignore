@@ -6,6 +6,3 @@
 !Makefile
 !README.md
 !fly.toml
-!**/runtime/Procfile
-!**/src
-!**/web
