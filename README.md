@@ -1,7 +1,7 @@
 kalaclista-social
 =================
 
-the deployment toolkit to fly.io with hivemind, litestream, h2o and gotosocial for my fediverse instance.
+The deployment toolkit to fly.io with hivemind, litestream, h2o and gotosocial for my fediverse instance.
 
 ## How to using that
 
@@ -25,7 +25,7 @@ You could customize these softwares owners, repositories, revisions or versions 
 Naming rules as:
 
 - `GITHUB_*_OWNER` - The repository owner on GitHub
-- `GITHUB_*_REPOSITORY` - The repository name on GITHUB
+- `GITHUB_*_REPOSITORY` - The repository name on GitHub
 - `GITHUB_*_REVISION` - The hash value of revision on the git repository
 - `GITHUB_*_VERSION`- This value exists for metadata, but is not always
 
@@ -51,7 +51,7 @@ GITHUB_GOTOSOCIAL_REVISION=c7a46e05dbca86b30123cb1c45c1457bbc7a9c4b
 GITHUB_GOTOSOCIAL_VERSION=v0.11.1
 ```
 
-If you would to find more details, please looking at <Dockerfile> or <Makefile>.
+If you would to find more details, please looking at [Dockerfile](Dockerfile) or [Makefile](Makefile).
 
 ## Running to this container
 
@@ -79,11 +79,11 @@ and you would to find more details, you could by their documentations.
 
 The files of `src/*.nix` or `fly.tonl` is for my instance.
 
-If you would to use these files your instance, please rewrite by yours.
+If you would to use these files your instance, please rewrite to yours.
 
 ## Licenses
 
-This repository excepts some files is under the [AGPL](LICENSE)
+This repository excepts some files, is under the [AGPL](LICENSE).
 
 Excepts files are as:
 
