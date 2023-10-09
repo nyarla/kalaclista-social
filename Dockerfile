@@ -8,7 +8,7 @@ ARG GITHUB_HIVEMIND_OWNER=DarthSim
 ARG GITHUB_HIVEMIND_REPOSITORY=hivemind
 ARG GITHUB_HIVEMIND_REVISION=580abe5b3faf585c450604227e40e960cdbb21bd
 
-RUN apk add --update --no-cache --virtual hivemind-build git go \
+RUN apk add --update --no-cache --virtual hivemind-build git go upx \
   \
   && mkdir -p /src && cd /src \
   \
@@ -18,10 +18,10 @@ RUN apk add --update --no-cache --virtual hivemind-build git go \
   && git reset --hard ${GITHUB_HIVEMIND_REVISION} \
   \
   && env CGO_ENABLED=0 go build -v -o /app/bin/hivemind . \
+  && upx --lzma /app/bin/hivemind \
   \
   && apk del --purge hivemind-build \
-  && cd / && rm -rf /src \
-  && rm -rf /root/.cache /root/go
+  && cd / && rm -rf /src /root
 
 # litestream
 FROM alpine as litestream
@@ -38,6 +38,7 @@ RUN apk add --update --no-cache --virtual litestream-build \
       build-base \
       git \
       go \
+      upx \
     \
     && mkdir -p /src && cd /src \
     \
@@ -51,10 +52,10 @@ RUN apk add --update --no-cache --virtual litestream-build \
       -ldflags "main.Version=${GITHUB_LITESTREAM_VERSION}' -extldflags '-static'" \
       -tags osusergo,netgo,sqlite_omit_load_extension \
       -o /app/bin/litestream ./cmd/litestream \
+    && upx --lzma /app/bin/litestream \
     \
     && apk del --purge litestream-build \
-    && cd / && rm -rf /src \
-    && rm -rf /root/.cache /root/go
+    && cd / && rm -rf /src /root
 
 # h2o
 FROM alpine as h2o
@@ -78,6 +79,7 @@ RUN apk add --update --no-cache --virtual h2o-build \
       ruby \
       ruby-dev \
       ruby-rake \
+      upx \
       zlib-dev \
   \
   && mkdir -p src && cd src \
@@ -93,10 +95,10 @@ RUN apk add --update --no-cache --virtual h2o-build \
     -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_INSTALL_PREFIX=/app \
     -DWITH_MRUBY=ON \
-  && make && make install \
+  && make && make install && upx --lzma /app/bin/h2o && chmod -R -w /app \
   \
   && apk del --purge h2o-build \
-  && cd / && rm -rf /src
+  && cd / && rm -rf /src /root
 
 # gotosocial
 FROM alpine as gotosocial
@@ -115,6 +117,7 @@ RUN apk add --update --no-cache --virtual gotosocial-build \
   git \
   go \
   nodejs \
+  upx \
   yarn \
   && mkdir -p /src && cd /src \
   \
@@ -128,16 +131,17 @@ RUN apk add --update --no-cache --virtual gotosocial-build \
   && BUDO_BUILD=1 node index.js \
   && cd .. \
   && rm -rf source \
-  && cp -R assets /web/www/assets \
+  && cp -R assets /web/www/assets && cp -R assets/default_avatars /web/www/ \
   && cp -R template /web/templates \
+  && chmod -R -w /web && chown -R nobody:nobody /web \
   && cd .. \
   \
   && VERSION=${GITHUB_GOTOSOCIAL_VERSION} ./scripts/build.sh \
   && cp gotosocial /app/bin/gotosocial \
+  && upx --lzma /app/bin/gotosocial \
   \
   && apk del --purge gotosocial-build \
-  && cd / && rm -rf /src \
-  && rm -rf /root/.cache /root/go
+  && cd / && rm -rf /src /root
 
 # runtime
 FROM alpine as runtime
@@ -146,29 +150,21 @@ RUN apk add --update --no-cache ca-certificates openssl
 WORKDIR /
 
 COPY --from=h2o /app /app
-COPY --from=hivemind /app/bin/hivemind /app/bin/
-COPY --from=litestream /app/bin/litestream /app/bin/
-COPY --from=gotosocial /app/bin/gotosocial /app/bin/
-RUN chmod +x /app/bin/*
+COPY --from=hivemind --chmod=0500 /app/bin/hivemind /app/bin/
+COPY --from=litestream --chmod=0500 /app/bin/litestream /app/bin/
+COPY --from=gotosocial --chmod=0500 /app/bin/gotosocial /app/bin/
 
 COPY --from=gotosocial /web /web
-COPY --from=gotosocial /web/www/assets/default_avatars /web/www/default_avatars
-COPY web/www/logo.png /web/www/assets/logo.png
-COPY web/www/ads.txt /web/www/ads.txt
+COPY --chmod=0400 --chown=nobody:nobody web/www/logo.png /web/www/assets/logo.png
+COPY --chmod=0400 --chown=nobody:nobody web/www/ads.txt /web/www/ads.txt
 
-RUN find /web -type d -exec chmod 0500 {} \; \
-  && find /web -type f -exec chmod 0400 {} \; \
-  && chown -R nobody:nobody -R /web
-
-RUN mkdir -p /var/run/kalaclista
-COPY runtime/Procfile /var/run/kalaclista/Procfile
-COPY runtime/h2o.json /var/run/kalaclista/h2o.conf
-COPY runtime/litestream.json /var/run/kalaclista/litestream.yml
-COPY runtime/gotosocial.json /var/run/kalaclista/gotosocial.yml
+WORKDIR /var/run/kalaclista
+COPY --chmod=0400 runtime/Procfile /var/run/kalaclista/Procfile
+COPY --chmod=0400 runtime/h2o.json /var/run/kalaclista/h2o.conf
+COPY --chmod=0400 runtime/litestream.json /var/run/kalaclista/litestream.yml
+COPY --chmod=0400 runtime/gotosocial.json /var/run/kalaclista/gotosocial.yml
 
 RUN mkdir -p /data
-
 ENV PATH /app/bin:$PATH
-WORKDIR /var/run/kalaclista
 
 ENTRYPOINT ["/app/bin/hivemind"]
