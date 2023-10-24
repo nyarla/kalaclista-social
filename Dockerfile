@@ -97,15 +97,15 @@ RUN apk add --update --no-cache --virtual h2o-build \
   && cd / && rm -rf /src /root
 
 # gotosocial
-FROM alpine as gotosocial
+FROM alpine:edge as gotosocial
 
 RUN mkdir -p /app/bin /web/www
 WORKDIR /
 
 ARG GITHUB_GOTOSOCIAL_OWNER=superseriousbusiness
 ARG GITHUB_GOTOSOCIAL_REPOSITORY=gotosocial
-ARG GITHUB_GOTOSOCIAL_REVISION=c7a46e05dbca86b30123cb1c45c1457bbc7a9c4b
-ARG GITHUB_GOTOSOCIAL_VERSION=v0.11.1
+ARG GITHUB_GOTOSOCIAL_REVISION=9114c5ca1bff8ebbe3d2d20d873f8f5b7a78be43
+ARG GITHUB_GOTOSOCIAL_VERSION=v0.12.0
 
 RUN apk add --update --no-cache --virtual gotosocial-build \
   \
@@ -121,11 +121,8 @@ RUN apk add --update --no-cache --virtual gotosocial-build \
   && git fetch --depth 1 origin ${GITHUB_GOTOSOCIAL_REVISION} \
   && git reset --hard ${GITHUB_GOTOSOCIAL_REVISION} \
   \
-  && cd ./web/source \
-  && yarn install \
-  && BUDO_BUILD=1 node index.js \
-  && cd .. \
-  && rm -rf source \
+  && yarn --cwd ./web/source install && yarn --cwd ./web/source ts-patch install \
+  && yarn --cwd ./web/source build && cd web \
   && cp -R assets /web/www/assets && cp -R assets/default_avatars /web/www/ \
   && cp -R template /web/templates \
   && chmod -R -w /web && chown -R nobody:nobody /web \
