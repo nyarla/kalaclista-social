@@ -8,7 +8,7 @@ ARG GITHUB_HIVEMIND_OWNER=DarthSim
 ARG GITHUB_HIVEMIND_REPOSITORY=hivemind
 ARG GITHUB_HIVEMIND_REVISION=580abe5b3faf585c450604227e40e960cdbb21bd
 
-RUN apk add --update --no-cache --virtual hivemind-build git go upx \
+RUN apk add --update --no-cache --virtual hivemind-build git go \
   \
   && mkdir -p /src && cd /src \
   \
@@ -18,7 +18,6 @@ RUN apk add --update --no-cache --virtual hivemind-build git go upx \
   && git reset --hard ${GITHUB_HIVEMIND_REVISION} \
   \
   && env CGO_ENABLED=0 go build -v -o /app/bin/hivemind . \
-  && upx --lzma /app/bin/hivemind \
   \
   && apk del --purge hivemind-build \
   && cd / && rm -rf /src /root
@@ -38,7 +37,6 @@ RUN apk add --update --no-cache --virtual litestream-build \
       build-base \
       git \
       go \
-      upx \
     \
     && mkdir -p /src && cd /src \
     \
@@ -52,7 +50,6 @@ RUN apk add --update --no-cache --virtual litestream-build \
       -ldflags "main.Version=${GITHUB_LITESTREAM_VERSION}' -extldflags '-static'" \
       -tags osusergo,netgo,sqlite_omit_load_extension \
       -o /app/bin/litestream ./cmd/litestream \
-    && upx --lzma /app/bin/litestream \
     \
     && apk del --purge litestream-build \
     && cd / && rm -rf /src /root
@@ -79,7 +76,6 @@ RUN apk add --update --no-cache --virtual h2o-build \
       ruby \
       ruby-dev \
       ruby-rake \
-      upx \
       zlib-dev \
   \
   && mkdir -p src && cd src \
@@ -95,7 +91,7 @@ RUN apk add --update --no-cache --virtual h2o-build \
     -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_INSTALL_PREFIX=/app \
     -DWITH_MRUBY=ON \
-  && make && make install && upx --lzma /app/bin/h2o && chmod -R -w /app \
+  && make && make install && chmod -R -w /app \
   \
   && apk del --purge h2o-build \
   && cd / && rm -rf /src /root
@@ -117,8 +113,7 @@ RUN apk add --update --no-cache --virtual gotosocial-build \
   git \
   go \
   nodejs \
-  upx \
-  yarn \
+  yarn  \
   && mkdir -p /src && cd /src \
   \
   && git init \
@@ -138,7 +133,6 @@ RUN apk add --update --no-cache --virtual gotosocial-build \
   \
   && VERSION=${GITHUB_GOTOSOCIAL_VERSION} ./scripts/build.sh \
   && cp gotosocial /app/bin/gotosocial \
-  && upx --lzma /app/bin/gotosocial \
   \
   && apk del --purge gotosocial-build \
   && cd / && rm -rf /src /root
