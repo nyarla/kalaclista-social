@@ -31,8 +31,8 @@
   accounts-allow-custom-css = true;
 
   # storage
-  storage-backend = "s3";
-  storage-s3-proxy = true;
+  storage-backend = "local";
+  storage-local-base-path = "/data/media";
 
   # modded version
   kalaclista-allowed-unauthorized-get = true;
