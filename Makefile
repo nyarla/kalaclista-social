@@ -1,6 +1,6 @@
 OWNER := nyarla
 REPO := gotosocial-modded
-REV := 8b2948ce06abce9bf93db0a3168f8896e33e2a55
+REV := ac1f34016e0139ac4d34a0a9a77167699529a20d
 VERSION := kalaclista
 
 all:
