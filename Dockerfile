@@ -1,5 +1,5 @@
 # hivemind
-FROM alpine as hivemind
+FROM golang:1.21.3-alpine as hivemind
 
 RUN mkdir -p /app/bin
 WORKDIR /
@@ -8,7 +8,7 @@ ARG GITHUB_HIVEMIND_OWNER=DarthSim
 ARG GITHUB_HIVEMIND_REPOSITORY=hivemind
 ARG GITHUB_HIVEMIND_REVISION=580abe5b3faf585c450604227e40e960cdbb21bd
 
-RUN apk add --update --no-cache --virtual hivemind-build git go \
+RUN apk add --update --no-cache --virtual hivemind-build git \
   \
   && mkdir -p /src && cd /src \
   \
@@ -23,20 +23,19 @@ RUN apk add --update --no-cache --virtual hivemind-build git go \
   && cd / && rm -rf /src /root
 
 # litestream
-FROM alpine as litestream
+FROM golang:1.21.3-alpine as litestream
 
 RUN mkdir -p /app/bin
 WORKDIR /
 
 ARG GITHUB_LITESTREAM_OWNER=benbjohnson
 ARG GITHUB_LITESTREAM_REPOSITORY=litestream
-ARG GITHUB_LITESTREAM_REVISION=e0493f979a8269a53b83b35939d0820f0a3a4fc1
-ARG GITHUB_LITESTREAM_VERSION=v0.3.11
+ARG GITHUB_LITESTREAM_REVISION=977d4a5ee45ae546537324a3cfbf926de3bebc97
+ARG GITHUB_LITESTREAM_VERSION=v0.3.13
 
 RUN apk add --update --no-cache --virtual litestream-build \
       build-base \
       git \
-      go \
     \
     && mkdir -p /src && cd /src \
     \
@@ -55,14 +54,14 @@ RUN apk add --update --no-cache --virtual litestream-build \
     && cd / && rm -rf /src /root
 
 # h2o
-FROM alpine as h2o
+FROM alpine:edge as h2o
 
 RUN mkdir -p /app
 WORKDIR /
 
 ARG GITHUB_H2O_OWNER=h2o
 ARG GITHUB_H2O_REPOSITORY=h2o
-ARG GITHUB_H2O_REVISION=cb9f500d0854b167862b3c599e4b89212d66c5c6
+ARG GITHUB_H2O_REVISION=3c43e66be611ff6ddce3836d12df298afa48087b
 
 RUN apk add --update --no-cache --virtual h2o-build \
       bison \
@@ -97,21 +96,20 @@ RUN apk add --update --no-cache --virtual h2o-build \
   && cd / && rm -rf /src /root
 
 # gotosocial
-FROM alpine:edge as gotosocial
+FROM golang:1.21.3-alpine as gotosocial
 
 RUN mkdir -p /app/bin /web/www
 WORKDIR /
 
 ARG GITHUB_GOTOSOCIAL_OWNER=superseriousbusiness
 ARG GITHUB_GOTOSOCIAL_REPOSITORY=gotosocial
-ARG GITHUB_GOTOSOCIAL_REVISION=9114c5ca1bff8ebbe3d2d20d873f8f5b7a78be43
-ARG GITHUB_GOTOSOCIAL_VERSION=v0.12.0
+ARG GITHUB_GOTOSOCIAL_REVISION=5fdc005061c773fda6e0da32abcc6f79ddee80ed
+ARG GITHUB_GOTOSOCIAL_VERSION=v0.12.1
 
 RUN apk add --update --no-cache --virtual gotosocial-build \
   \
   build-base \
   git \
-  go \
   nodejs \
   yarn  \
   && mkdir -p /src && cd /src \
