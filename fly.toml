@@ -2,16 +2,14 @@ app = "kalaclista-social-v2"
 primary_region = "nrt"
 
 kill_signal = "SIGTERM"
-kill_timeout = 5
+kill_timeout = 10
 
 [deploy]
 strategy = "rolling"
 
 [[services]]
-  http_checks = []
   internal_port = 9080
   protocol = "tcp"
-  script_checks = []
 
   [services.concurrency]
     hard_limit = 25
@@ -28,10 +26,10 @@ strategy = "rolling"
   port = 443
 
   [[services.tcp_checks]]
-  grace_period = "1s"
-  interval = "15s"
+  grace_period = "5s"
+  interval = "10s"
   restart_limit = 0
-  timeout = "2s"
+  timeout = "10s"
 
 [[mounts]]
 destination = "/data"
