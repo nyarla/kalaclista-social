@@ -1,7 +1,7 @@
 kalaclista-social
 =================
 
-The deployment toolkit to fly.io with hivemind, litestream, h2o and gotosocial for my fediverse instance.
+The deployment toolkit to fly.io with shoreman, litestream, h2o and gotosocial for my fediverse instance.
 
 ## How to using that
 
@@ -32,23 +32,22 @@ Naming rules as:
 As current exists:
 
 ```
-GITHUB_HIVEMIND_OWNER=DarthSim
-GITHUB_HIVEMIND_REPOSITORY=hivemind
-GITHUB_HIVEMIND_REVISION=580abe5b3faf585c450604227e40e960cdbb21bd
+GITHUB_SHOREMAN_URL="https://raw.githubusercontent.com/chrismytton/shoreman/master/shoreman.sh"
+GITHUB_SHOREMAN_SHA256="a21acce3072bb8594565094e4a9bbafd3b9d7fa04abd7e0c74c19fd479adb817"
 
 GITHUB_LITESTREAM_OWNER=benbjohnson
 GITHUB_LITESTREAM_REPOSITORY=litestream
-GITHUB_LITESTREAM_REVISION=e0493f979a8269a53b83b35939d0820f0a3a4fc1
-GITHUB_LITESTREAM_VERSION=v0.3.11
+GITHUB_LITESTREAM_REVISION=977d4a5ee45ae546537324a3cfbf926de3bebc97
+GITHUB_LITESTREAM_VERSION=v0.3.13
 
 GITHUB_H2O_OWNER=h2o
 GITHUB_H2O_REPOSITORY=h2o
-GITHUB_H2O_REVISION=cb9f500d0854b167862b3c599e4b89212d66c5c6
+GITHUB_H2O_REVISION=5c78fc1e3e7fd987cf699c9684e5b8483608e492
 
 GITHUB_GOTOSOCIAL_OWNER=superseriousbusiness
 GITHUB_GOTOSOCIAL_REPOSITORY=gotosocial
-GITHUB_GOTOSOCIAL_REVISION=c7a46e05dbca86b30123cb1c45c1457bbc7a9c4b
-GITHUB_GOTOSOCIAL_VERSION=v0.11.1
+GITHUB_GOTOSOCIAL_REVISION=f4fcffc8b56ef73c184ae17892b69181961c15c7
+GITHUB_GOTOSOCIAL_VERSION=v0.13.0
 ```
 
 If you would to find more details, please looking at [Dockerfile](Dockerfile) or [Makefile](Makefile).
