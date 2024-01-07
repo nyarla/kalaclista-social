@@ -1,26 +1,18 @@
-# hivemind
-FROM golang:1.21.3-alpine as hivemind
+# shoreman
+FROM alpine as shoreman
 
 RUN mkdir -p /app/bin
 WORKDIR /
 
-ARG GITHUB_HIVEMIND_OWNER=DarthSim
-ARG GITHUB_HIVEMIND_REPOSITORY=hivemind
-ARG GITHUB_HIVEMIND_REVISION=d8b34a08299a644f98afe332521271990acc60f7
+ARG GITHUB_SHOREMAN_URL="https://raw.githubusercontent.com/chrismytton/shoreman/master/shoreman.sh"
+ARG GITHUB_SHOREMAN_SHA256="a21acce3072bb8594565094e4a9bbafd3b9d7fa04abd7e0c74c19fd479adb817"
 
-RUN apk add --update --no-cache --virtual hivemind-build git \
+RUN apk add --update --no-cache --virtual shoreman curl coreutils \
   \
-  && mkdir -p /src && cd /src \
-  \
-  && git init \
-  && git remote add origin https://github.com/${GITHUB_HIVEMIND_OWNER}/${GITHUB_HIVEMIND_REPOSITORY}.git \
-  && git fetch --depth 1 origin ${GITHUB_HIVEMIND_REVISION} \
-  && git reset --hard ${GITHUB_HIVEMIND_REVISION} \
-  \
-  && env CGO_ENABLED=0 go build -v -o /app/bin/hivemind . \
-  \
-  && apk del --purge hivemind-build \
-  && cd / && rm -rf /src /root
+  && curl -o /app/bin/shoreman "${GITHUB_SHOREMAN_URL}" \
+  && test "$(sha256sum /app/bin/shoreman | cut -d ' ' -f 1)" = "${GITHUB_SHOREMAN_SHA256}" \
+  && chmod -R +x /app/bin \
+  && apk del --purge shoreman
 
 # litestream
 FROM golang:1.21.3-alpine as litestream
@@ -135,11 +127,11 @@ RUN apk add --update --no-cache --virtual gotosocial-build \
 # runtime
 FROM alpine as runtime
 
-RUN apk add --update --no-cache ca-certificates openssl
+RUN apk add --update --no-cache ca-certificates openssl bash
 WORKDIR /
 
 COPY --from=h2o /app /app
-COPY --from=hivemind --chmod=0500 /app/bin/hivemind /app/bin/
+COPY --from=shoreman --chmod=0500 /app/bin/shoreman /app/bin/
 COPY --from=litestream --chmod=0500 /app/bin/litestream /app/bin/
 COPY --from=gotosocial --chmod=0500 /app/bin/gotosocial /app/bin/
 
@@ -156,4 +148,4 @@ COPY --chmod=0400 runtime/gotosocial.json /var/run/kalaclista/gotosocial.yml
 RUN mkdir -p /data
 ENV PATH /app/bin:$PATH
 
-ENTRYPOINT ["/app/bin/hivemind"]
+ENTRYPOINT ["/app/bin/shoreman", "Procfile"]
