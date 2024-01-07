@@ -37,8 +37,8 @@ RUN apk add --update --no-cache --virtual litestream-build \
     && git reset --hard ${GITHUB_LITESTREAM_REVISION} \
     \
     && go build \
-      -v \
-      -ldflags "main.Version=${GITHUB_LITESTREAM_VERSION}' -extldflags '-static'" \
+      -trimpath -v \
+      -ldflags "-X 'main.Version=${GITHUB_LITESTREAM_VERSION}' -s -w -extldflags '-static' -buildid=" \
       -tags osusergo,netgo,sqlite_omit_load_extension \
       -o /app/bin/litestream ./cmd/litestream \
     \
