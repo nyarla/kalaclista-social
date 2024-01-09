@@ -40,7 +40,35 @@
         "/fileserver" = {
           "mruby.handler" = ''
             lambda do |env|
-              return [ 303, { "Location" => "https://media.social.src.kalaclista.com#{env['PATH_INFO']}" }, [] ]
+              paths = env['PATH_INFO'].split('/')
+
+              # cleanup PATH_INFO
+              paths.shift
+              paths.each do |path|
+                path.gsub!(/[^a-zA-Z0-9.]+/, "")
+              end
+
+              href = paths.join("/")
+              location = "https://media.social.src.kalaclista.com/#{href}"
+
+              request = http_request(location, { :method => 'HEAD' })
+              status, _, _, = request.join
+
+              if status == 200
+                return [ 303, { 'Location' => location }, [] ]
+              end
+
+              request = http_request("http://127.0.0.1:8080/fileserver/#{href}", {
+                :headers => { 'User-Agent' => 'h2o internal agent' }
+              })
+
+              status, _, _ = request.join
+
+              if 200 <= status && status <= 399
+                return [ 303, { 'Location' => location }, [] ]
+              end
+
+              return [ 404, {'Content-Type' => 'text/plain'}, ['404 not found'] ]
             end
           '';
         };
