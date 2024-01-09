@@ -36,6 +36,14 @@
           "proxy.timeout.keepalive" = 0;
           "proxy.timeout.io" = 31536000;
         };
+
+        "/fileserver" = {
+          "mruby.handler" = ''
+            lambda do |env|
+              return [ 303, { "Location" => "https://media.social.src.kalaclista.com#{env['PATH_INFO']}" }, [] ]
+            end
+          '';
+        };
       };
     };
   };

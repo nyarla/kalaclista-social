@@ -22,6 +22,8 @@
   # web 
   web-template-base-dir = "/web/templates";
   web-asset-base-dir = "/web/www";
+  advanced-csp-extra-uris = [ "*" ];
+  media-remote-cache-days = 0;
 
   # instance
   instance-inject-mastodon-version = true;
@@ -31,7 +33,7 @@
   accounts-allow-custom-css = true;
 
   # storage
-  storage-backend = "local";
+  storage-backend = "s3";
   storage-local-base-path = "/data/media";
 
   # modded version
