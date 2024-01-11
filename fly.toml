@@ -4,6 +4,8 @@ primary_region = "nrt"
 kill_signal = "SIGTERM"
 kill_timeout = 10
 
+swap_size_mb = 512
+
 [deploy]
 strategy = "rolling"
 
@@ -12,8 +14,8 @@ strategy = "rolling"
   protocol = "tcp"
 
   [services.concurrency]
-    hard_limit = 25
-    soft_limit = 20
+    hard_limit = 50
+    soft_limit = 25
     type = "connections"
 
   [[services.port]]
