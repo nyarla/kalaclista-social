@@ -1,3 +1,3 @@
-h2o: /app/bin/h2o -c /var/run/kalaclista/h2o.conf
-gotosocial: /app/bin/gotosocial --config-path=/var/run/kalaclista/gotosocial.yml server start
-litestream: /app/bin/litestream replicate -config /var/run/kalaclista/litestream.yml
+h2o: while true; do /app/bin/h2o -c /var/run/kalaclista/h2o.conf ; done
+gotosocial: while true ; do /app/bin/gotosocial --config-path=/var/run/kalaclista/gotosocial.yml server start ; done
+litestream: while true ; do /app/bin/litestream replicate -config /var/run/kalaclista/litestream.yml ; done
