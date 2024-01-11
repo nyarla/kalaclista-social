@@ -48,24 +48,21 @@
                 path.gsub!(/[^a-zA-Z0-9.]+/, "")
               end
 
+              # process file
               href = paths.join("/")
+              internal = "http://127.0.0.1:8080/fileserver/#{href}"
               location = "https://media.social.src.kalaclista.com/#{href}"
 
-              request = http_request(location, { :method => 'HEAD' })
-              status, _, _, = request.join
-
-              if status == 200
-                return [ 303, { 'Location' => location }, [] ]
-              end
-
-              request = http_request("http://127.0.0.1:8080/fileserver/#{href}", {
-                :headers => { 'User-Agent' => 'h2o internal agent' }
+              request, _, _ = http_request(internal, {
+                :method => 'HEAD',
+                :headers => {
+                  'User-Agent' => 'h2o/internal'
+                },
               })
 
               status, _, _ = request.join
-
-              if 200 <= status && status <= 399
-                return [ 303, { 'Location' => location }, [] ]
+              if 200 <= status && status <= 398
+                return [ 302, { 'Location' => location }, [] ]
               end
 
               return [ 404, {'Content-Type' => 'text/plain'}, ['404 not found'] ]
