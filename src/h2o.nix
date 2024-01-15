@@ -39,34 +39,48 @@
 
         "/fileserver" = {
           "mruby.handler" = ''
-            lambda do |env|
-              paths = env['PATH_INFO'].split('/')
-
-              # cleanup PATH_INFO
-              paths.shift
-              paths.each do |path|
-                path.gsub!(/[^a-zA-Z0-9.]+/, "")
+            class Redirector
+              def initialize
+                @cache = {}
               end
 
-              # process file
-              href = paths.join("/")
-              internal = "http://127.0.0.1:8080/fileserver/#{href}"
-              location = "https://media.social.src.kalaclista.com/#{href}"
+              def href(path)
+                paths = path.split('/')
+                paths.shift
+                paths.each do |src|
+                  src.gsub!(/[^a-zA-Z0-9.]+/, "")
+                end
 
-              request, _, _ = http_request(internal, {
-                :method => 'HEAD',
-                :headers => {
-                  'User-Agent' => 'h2o/internal'
-                },
-              })
-
-              status, _, _ = request.join
-              if 200 <= status && status <= 398
-                return [ 302, { 'Location' => location }, [] ]
+                return paths.join('/')
               end
 
-              return [ 404, {'Content-Type' => 'text/plain'}, ['404 not found'] ]
+              def call(env)
+                path = href(env['PATH_INFO'])
+
+                if cache = @cache[path]
+                  return [ 302, { 'Location' => cache }, [] ]
+                end
+
+                internal = "http://127.0.0.1:8080/fileserver/#{path}"
+                location = "https://media.social.src.kalaclista.com/#{path}"
+
+                status, _, _ = http_request(internal, {
+                  :method  => 'HEAD',
+                  :headers => {
+                    'User-Agent' => 'h2o/internal',
+                  }
+                }).join
+
+                if 200 <= status && status <= 398
+                  @cache[path] = location
+                  return [ 302, { 'Location' => location }, [] ]
+                end
+
+                return [ 404, { 'Content-Type' => 'text/plain; charset=utf8' }, ['404 not found'] ]
+              end
             end
+
+            Redirector.new
           '';
         };
       };
