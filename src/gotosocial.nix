@@ -38,4 +38,7 @@
 
   # modded version
   kalaclista-allowed-unauthorized-get = true;
+  kalaclista-use-public-bucket-url = true;
+  kalaclista-public-bucket-url-prefix =
+    "https://media.social.src.kalaclista.com";
 }
