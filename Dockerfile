@@ -147,5 +147,6 @@ COPY --chmod=0400 runtime/gotosocial.json /var/run/kalaclista/gotosocial.yml
 
 RUN mkdir -p /data
 ENV PATH /app/bin:$PATH
+ENV GODEBUG=madvdontneed=1
 
 ENTRYPOINT ["/app/bin/shoreman", "Procfile"]
