@@ -33,7 +33,7 @@
   accounts-allow-custom-css = true;
 
   # storage
-  storage-backend = "s3";
+  storage-backend = "local";
   storage-local-base-path = "/data/media";
 
   # modded version
