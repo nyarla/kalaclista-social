@@ -13,16 +13,22 @@ up: build
 		--build-arg GITHUB_GOTOSOCIAL_REVISION=$(REV) \
 		--build-arg GITHUB_GOTOSOCIAL_VERSION=$(VERSION)
 
-build:
+config:
 	nix eval --json --file src/h2o.nix >runtime/h2o.json
 	nix eval --json --file src/gotosocial.nix >runtime/gotosocial.json
 	nix eval --json --file src/litestream.nix >runtime/litestream.json
+
+build: config
 	env DOCKER_BUILDKIT=1 docker build -t kalaclista-social-v2_1 \
+		$(EXTRA_BUILD_ARGS) \
 		--build-arg GITHUB_GOTOSOCIAL_OWNER=$(OWNER) \
 		--build-arg GITHUB_GOTOSOCIAL_REPOSITORY=$(REPO) \
 		--build-arg GITHUB_GOTOSOCIAL_REVISION=$(REV) \
 		--build-arg GITHUB_GOTOSOCIAL_VERSION=$(VERSION) \
 		.
+
+rebuild:
+	@$(MAKE) EXTRA_BUILD_ARGS="--no-cache" build
 
 pull:
 	rm -rf data/sqlite3.db
