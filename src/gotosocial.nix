@@ -1,5 +1,6 @@
 {
   # general
+  log-client-ip = false;
   log-timestamp-format = "2006-01-02T15:04:05Z07:00";
 
   application-name = "カラクリスタ？";
@@ -22,23 +23,26 @@
   # web 
   web-template-base-dir = "/web/templates";
   web-asset-base-dir = "/web/www";
-  advanced-csp-extra-uris = [ "*" ];
-  media-remote-cache-days = 0;
 
   # instance
+  instance-languages = [ "ja" ];
   instance-inject-mastodon-version = true;
 
   # accounts
   accounts-registration-open = false;
-  accounts-allow-custom-css = true;
+  accounts-allow-custom-css = false;
+
+  # media
+  media-remote-cache-days = 7;
+  media-cleanup-every = "12h";
 
   # storage
   storage-backend = "local";
   storage-local-base-path = "/data/media";
 
+  # http-client
+  http-client = { timeout = "5s"; };
+
   # modded version
   kalaclista-allowed-unauthorized-get = true;
-  kalaclista-use-public-bucket-url = true;
-  kalaclista-public-bucket-url-prefix =
-    "https://media.social.src.kalaclista.com";
 }
