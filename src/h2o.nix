@@ -1,4 +1,17 @@
-{
+let
+  blocklist = builtins.readFile ./tor.block;
+
+  acl = ''
+    BLOCKLIST = %w(${blocklist});
+    lambda do |env|
+      if BLOCKLIST.include? env['Fly-Client-IP']
+        return [403, {}, []]
+      else
+        return [399, {}, []]
+      end
+    end
+  '';
+in {
   listen = { port = 9080; };
 
   access-log = "/dev/stdout";
@@ -24,12 +37,14 @@
     "kalaclista.com" = {
       paths = {
         "/" = {
+          "mruby.handler" = acl;
           "file.dir" = "/web/www";
           "proxy.reverse.url" = "http://127.0.0.1:8080/";
           "proxy.preserve-host" = "ON";
         };
 
         "/api/v1/streaming" = {
+          "mruby.handler" = acl;
           "proxy.reverse.url" = "http://127.0.0.1:8080/api/v1/streaming";
           "proxy.tunnel" = "ON";
           "proxy.connect" = [ "+127.0.0.1" "+172.16.0.0/12" ];
