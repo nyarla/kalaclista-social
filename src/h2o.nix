@@ -36,6 +36,11 @@
           "proxy.timeout.keepalive" = 0;
           "proxy.timeout.io" = 31536000;
         };
+
+        "/fileserver" = {
+          "mruby.handler-file" = "/var/run/kalaclista/mruby/fileserver.rb";
+          "proxy.reverse.url" = "http://127.0.0.1:8080/fileserver";
+        };
       };
     };
   };

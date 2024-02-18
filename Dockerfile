@@ -140,6 +140,7 @@ COPY --chmod=0400 --chown=nobody:nobody web/www/logo.png /web/www/assets/logo.pn
 COPY --chmod=0400 --chown=nobody:nobody web/www/ads.txt /web/www/ads.txt
 
 WORKDIR /var/run/kalaclista
+COPY --chmod=0400 runtime/mruby /var/run/kalaclista/mruby
 COPY --chmod=0400 runtime/Procfile /var/run/kalaclista/Procfile
 COPY --chmod=0400 runtime/h2o.json /var/run/kalaclista/h2o.conf
 COPY --chmod=0400 runtime/litestream.json /var/run/kalaclista/litestream.yml
