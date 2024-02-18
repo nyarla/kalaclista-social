@@ -33,3 +33,6 @@ rebuild:
 pull:
 	rm -rf data/sqlite3.db
 	fly ssh sftp get /data/sqlite3.db data/sqlite3.db
+
+test:
+	docker run -it -p 9080:9080 --rm --entrypoint /bin/sh --mount type=bind,source=$(shell pwd)/media/root,target=/data/media kalaclista-social-v2_1:latest
