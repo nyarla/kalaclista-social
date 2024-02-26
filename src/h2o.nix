@@ -1,25 +1,11 @@
-let
-  blocklist = builtins.readFile ./tor.block;
-
-  acl = ''
-    BLOCKLIST = %w(${blocklist});
-    lambda do |env|
-      if BLOCKLIST.include? env['Fly-Client-IP']
-        return [403, {}, []]
-      else
-        return [399, {}, []]
-      end
-    end
-  '';
-in {
-  listen = { port = 9080; };
+{
+  listen = { port = 8080; };
 
   access-log = "/dev/stdout";
   error-log = "/dev/stderr";
 
   compress = "ON";
 
-  "http1-upgrade-to-http2" = "OFF";
   "proxy.preserve-x-forwarded-proto" = "ON";
 
   hosts = {
@@ -31,21 +17,26 @@ in {
             url = "https://kalaclista.com";
           };
         };
+        "/.well-known/healthcheck" = {
+          "mruby.handler" = ''
+            lambda do |env|
+              return [ 200, {'Content-Type' => 'text/plain'}, ['ok'] ]
+            end
+          '';
+        };
       };
     };
 
     "kalaclista.com" = {
       paths = {
         "/" = {
-          "mruby.handler" = acl;
           "file.dir" = "/web/www";
-          "proxy.reverse.url" = "http://127.0.0.1:8080/";
+          "proxy.reverse.url" = "http://127.0.0.1:9080/";
           "proxy.preserve-host" = "ON";
         };
 
         "/api/v1/streaming" = {
-          "mruby.handler" = acl;
-          "proxy.reverse.url" = "http://127.0.0.1:8080/api/v1/streaming";
+          "proxy.reverse.url" = "http://127.0.0.1:9080/api/v1/streaming";
           "proxy.tunnel" = "ON";
           "proxy.connect" = [ "+127.0.0.1" "+172.16.0.0/12" ];
           "proxy.timeout.keepalive" = 0;
@@ -53,8 +44,8 @@ in {
         };
 
         "/fileserver" = {
-          "mruby.handler-file" = "/var/run/kalaclista/mruby/fileserver.rb";
-          "proxy.reverse.url" = "http://127.0.0.1:8080/fileserver";
+          "file.dir" = "/data/media";
+          "proxy.reverse.url" = "http://127.0.0.1:9080/fileserver";
         };
       };
     };

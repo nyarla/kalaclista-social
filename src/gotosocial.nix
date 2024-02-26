@@ -10,7 +10,7 @@
   account-domain = "kalaclista.com";
   protocol = "https";
   bind-address = "127.0.0.1";
-  port = 8080;
+  port = 9080;
 
   trusted-proxies = [ "127.0.0.1" "172.16.0.0/12" ];
 

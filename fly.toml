@@ -2,36 +2,22 @@ app = "kalaclista-social-v2"
 primary_region = "nrt"
 
 kill_signal = "SIGTERM"
-kill_timeout = 10
+kill_timeout = 30
 
 swap_size_mb = 512
 
 [deploy]
 strategy = "rolling"
 
-[[services]]
-  internal_port = 9080
-  protocol = "tcp"
-
-  [services.concurrency]
-    hard_limit = 100
-    soft_limit = 50
-    type = "connections"
-
-  [[services.port]]
-  handlers = ["http"]
-  port = 80
+[http_service]
+  internal_port = 8080
   force_https = true
-
-  [[services.ports]]
-  handlers = ["tls", "http"]
-  port = 443
-
-  [[services.tcp_checks]]
-  grace_period = "5s"
-  interval = "10s"
-  restart_limit = 0
-  timeout = "10s"
+  auto_stop_machines = false
+  auto_start_machines = false
+  [[http_service.checks]]
+    protocol = "http"
+    method = "GET"
+    path = "/.well-known/healthcheck"
 
 [[mounts]]
 destination = "/data"

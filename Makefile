@@ -13,7 +13,7 @@ up: build
 		--build-arg GITHUB_GOTOSOCIAL_REVISION=$(REV) \
 		--build-arg GITHUB_GOTOSOCIAL_VERSION=$(VERSION)
 
-config: blocklist
+config:
 	nix eval --json --file src/h2o.nix >runtime/h2o.json
 	nix eval --json --file src/gotosocial.nix >runtime/gotosocial.json
 	nix eval --json --file src/litestream.nix >runtime/litestream.json
@@ -36,6 +36,3 @@ pull:
 
 test:
 	docker run -it -p 9080:9080 --rm --entrypoint /bin/sh --mount type=bind,source=$(shell pwd)/media/root,target=/data/media kalaclista-social-v2_1:latest
-
-blocklist:
-	test -e src/tor.block || curl -L 'https://check.torproject.org/torbulkexitlist' | tr "\n" " " >src/tor.block
