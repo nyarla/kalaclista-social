@@ -1,10 +1,37 @@
-{
+let
+  tor = builtins.readFile ./tor.block;
+
+  acl = ''
+    TOR = %w(${tor})
+
+    FORBIDDEN = [ 403, {}, [] ]
+    NEXT = [ 399, {}, [] ]
+
+    lambda do |env|
+      if TOR.include?(env['HTTP_FLY_CLIENT_IP'])
+        return FORBIDDEN
+      end
+
+      if /\/store.lock/.match(env['PATH_INFO'])
+        return FORBIDDEN
+      end
+
+      return NEXT
+    end
+  '';
+
+  rewrite = ''
+    lambda do |env|
+      env['HTTP_X_FORWARDED_FOR'] = env['HTTP_FLY_CLIENT_IP']
+
+      return H2O.next.call(env)
+    end
+  '';
+in {
   listen = { port = 8080; };
 
   access-log = "/dev/stdout";
   error-log = "/dev/stderr";
-
-  compress = "ON";
 
   "proxy.preserve-x-forwarded-proto" = "ON";
 
@@ -28,25 +55,37 @@
     };
 
     "kalaclista.com" = {
-      paths = {
-        "/" = {
-          "file.dir" = "/web/www";
-          "proxy.reverse.url" = "http://127.0.0.1:9080/";
-          "proxy.preserve-host" = "ON";
-        };
+      paths = let upstream = "http://127.0.0.1:9080";
+      in {
+        "/" = [
+          { "mruby.handler" = acl; }
+          { "mruby.handler" = rewrite; }
+          {
+            "file.dir" = "/web/www";
+            "proxy.reverse.url" = "${upstream}/";
+            "proxy.preserve-host" = "ON";
+          }
+        ];
 
-        "/api/v1/streaming" = {
-          "proxy.reverse.url" = "http://127.0.0.1:9080/api/v1/streaming";
-          "proxy.tunnel" = "ON";
-          "proxy.connect" = [ "+127.0.0.1" "+172.16.0.0/12" ];
-          "proxy.timeout.keepalive" = 0;
-          "proxy.timeout.io" = 31536000;
-        };
+        "/api/v1/streaming" = [
+          { "mruby.handler" = acl; }
+          { "mruby.handler" = rewrite; }
+          {
+            "proxy.reverse.url" = "${upstream}/api/v1/streaming";
+            "proxy.tunnel" = "ON";
+            "proxy.connect" = [ "+127.0.0.1" "+172.16.0.0/12" ];
+            "proxy.timeout.keepalive" = 0;
+            "proxy.timeout.io" = 31536000;
+          }
+        ];
 
-        "/fileserver" = {
-          "file.dir" = "/data/media";
-          "proxy.reverse.url" = "http://127.0.0.1:9080/fileserver";
-        };
+        "/fileserver" = [
+          { "mruby.handler" = acl; }
+          {
+            "file.dir" = "/data/media";
+            "proxy.reverse.url" = "${upstream}/fileserver";
+          }
+        ];
       };
     };
   };
