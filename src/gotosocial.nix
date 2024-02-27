@@ -32,11 +32,11 @@
   accounts-allow-custom-css = false;
 
   # media
-  media-remote-cache-days = 7;
-  media-cleanup-every = "12h";
+  media-remote-cache-days = 0;
 
   # storage
-  storage-backend = "local";
+  storage-backend = "s3";
+  storage-s3-proxy = true;
   storage-local-base-path = "/data/media";
 
   # http-client

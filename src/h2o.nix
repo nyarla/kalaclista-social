@@ -27,6 +27,53 @@ let
       return H2O.next.call(env)
     end
   '';
+
+  proxy = ''
+    ENDPOINT  = "https://media.social.src.kalaclista.com"
+    LOCALPATH = "/data/exists"
+
+    def fn(path)
+      return "#{LOCALPATH}/#{path.gsub('/', '.')}"
+    end
+
+    def check(path)
+      return File.exist?(path)
+    end
+
+    def fetch(env)
+      headers = {}
+      env.each do |key, value|
+        if /^HTTP_/.match(key)
+          headers[$'] = value
+        end
+      end
+
+      href = "#{ENDPOINT}#{env['PATH_INFO']}"
+      body = env['rack.input'] ? env['rack.input'].read : "";
+
+      return http_request(href, {
+        :method => env['REQUEST_METHOD'],
+        :header => headers,
+        :body   => body,
+      }).join
+    end
+
+    lambda do |env|
+      path = fn(env['PATH_INFO'])
+
+      if check(path)
+        return fetch(env)
+      end
+
+      response = H2O.next.call(env)
+      if 200 <= response[0] && response[0] <= 299
+        fh = File.open(path, 'w')
+        fh.close()
+      end
+
+      return response
+    end
+  '';
 in {
   listen = { port = 8080; };
 
@@ -81,10 +128,9 @@ in {
 
         "/fileserver" = [
           { "mruby.handler" = acl; }
-          {
-            "file.dir" = "/data/media";
-            "proxy.reverse.url" = "${upstream}/fileserver";
-          }
+          { "mruby.handler" = rewrite; }
+          { "mruby.handler" = proxy; }
+          { "proxy.reverse.url" = "${upstream}/fileserver"; }
         ];
       };
     };
