@@ -42,6 +42,9 @@
   # http-client
   http-client = { timeout = "5s"; };
 
+  # advanced
+  advanced-csp-extra-uris = [ "media.social.src.kalaclista.com" ];
+
   # modded version
   kalaclista-allowed-unauthorized-get = true;
 }
