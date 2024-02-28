@@ -28,7 +28,7 @@ let
     end
   '';
 
-  proxy = ''
+  redirect = ''
     ENDPOINT  = "https://media.social.src.kalaclista.com"
     LOCALPATH = "/data/exists"
 
@@ -40,38 +40,26 @@ let
       return File.exist?(path)
     end
 
-    def fetch(env)
-      headers = {}
-      env.each do |key, value|
-        if /^HTTP_/.match(key)
-          headers[$'] = value
-        end
-      end
-
+    def redirect(env)
       href = "#{ENDPOINT}#{env['PATH_INFO']}"
-      body = env['rack.input'] ? env['rack.input'].read : "";
-
-      return http_request(href, {
-        :method => env['REQUEST_METHOD'],
-        :header => headers,
-        :body   => body,
-      }).join
+      return [ 303 , {
+        'Location' => href,
+        'Access-Control-Allow-Origin' => '*',
+      }, [] ]
     end
 
     lambda do |env|
       path = fn(env['PATH_INFO'])
 
       if check(path)
-        return fetch(env)
+        return redirect(env)
       end
 
-      response = H2O.next.call(env)
-      if 200 <= response[0] && response[0] <= 299
-        fh = File.open(path, 'w')
-        fh.close()
-      end
+      H2O.next.call(env)
+      fh = File.open(path, 'w')
+      fh.close()
 
-      return response
+      return redirect(env)
     end
   '';
 in {
@@ -114,22 +102,18 @@ in {
           }
         ];
 
-        "/api/v1/streaming" = [
-          { "mruby.handler" = acl; }
-          { "mruby.handler" = rewrite; }
-          {
-            "proxy.reverse.url" = "${upstream}/api/v1/streaming";
-            "proxy.tunnel" = "ON";
-            "proxy.connect" = [ "+127.0.0.1" "+172.16.0.0/12" ];
-            "proxy.timeout.keepalive" = 0;
-            "proxy.timeout.io" = 31536000;
-          }
-        ];
+        "/api/v1/streaming" = [{
+          "proxy.reverse.url" = "${upstream}/api/v1/streaming";
+          "proxy.tunnel" = "ON";
+          "proxy.connect" = [ "+127.0.0.1" "+172.16.0.0/12" ];
+          "proxy.timeout.keepalive" = 0;
+          "proxy.timeout.io" = 31536000;
+        }];
 
         "/fileserver" = [
           { "mruby.handler" = acl; }
           { "mruby.handler" = rewrite; }
-          { "mruby.handler" = proxy; }
+          { "mruby.handler" = redirect; }
           { "proxy.reverse.url" = "${upstream}/fileserver"; }
         ];
       };
