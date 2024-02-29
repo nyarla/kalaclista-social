@@ -61,10 +61,16 @@ in {
           { "mruby.handler" = acl; }
           { "mruby.handler" = rewrite; }
           {
-            "file.dir" = "/web/www";
+            "file.dir" = "/web/www/root";
             "proxy.reverse.url" = "${upstream}/";
             "proxy.preserve-host" = "ON";
           }
+        ];
+
+        "/assets" = [
+          { "mruby.handler" = acl; }
+          { "mruby.handler" = rewrite; }
+          { "file.dir" = "/web/www/assets"; }
         ];
 
         "/api/v1/streaming" = [{

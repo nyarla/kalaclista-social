@@ -113,7 +113,7 @@ RUN apk add --update --no-cache --virtual gotosocial-build \
   \
   && yarn --cwd ./web/source install && yarn --cwd ./web/source ts-patch install \
   && yarn --cwd ./web/source build && cd web \
-  && cp -R assets /web/www/assets && cp -R assets/default_avatars /web/www/ \
+  && cp -R assets /web/www/assets \
   && cp -R template /web/templates \
   && chmod -R -w /web && chown -R nobody:nobody /web \
   && cd .. \
@@ -136,8 +136,8 @@ COPY --from=litestream --chmod=0500 /app/bin/litestream /app/bin/
 COPY --from=gotosocial --chmod=0500 /app/bin/gotosocial /app/bin/
 
 COPY --from=gotosocial /web /web
-COPY --chmod=0400 --chown=nobody:nobody web/www/logo.png /web/www/assets/logo.png
-COPY --chmod=0400 --chown=nobody:nobody web/www/ads.txt /web/www/ads.txt
+COPY web/ /web/
+RUN chown -R nobody:nobody /web && chmod -R -w /web
 
 WORKDIR /var/run/kalaclista
 COPY --chmod=0400 runtime/Procfile /var/run/kalaclista/Procfile

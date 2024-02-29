@@ -21,7 +21,7 @@
 
   # web 
   web-template-base-dir = "/web/templates";
-  web-asset-base-dir = "/web/www";
+  web-asset-base-dir = "/web/www/assets";
 
   # instance
   instance-languages = [ "ja" ];
