@@ -4,6 +4,7 @@
     replicas = [{
       url = "\${LITESTREAM_R2_URL}";
       endpoint = "\${LITESTREAM_R2_ENDPOINT}";
+      retention = "168h";
     }];
   }];
 }
