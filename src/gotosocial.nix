@@ -35,15 +35,11 @@
   media-remote-cache-days = 0;
 
   # storage
-  storage-backend = "s3";
-  storage-s3-proxy = true;
+  storage-backend = "local";
   storage-local-base-path = "/data/media";
 
   # http-client
   http-client = { timeout = "5s"; };
-
-  # advanced
-  advanced-csp-extra-uris = [ "media.social.src.kalaclista.com" ];
 
   # modded version
   kalaclista-allowed-unauthorized-get = true;

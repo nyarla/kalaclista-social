@@ -27,41 +27,6 @@ let
       return H2O.next.call(env)
     end
   '';
-
-  redirect = ''
-    ENDPOINT  = "https://media.social.src.kalaclista.com"
-    LOCALPATH = "/data/exists"
-
-    def fn(path)
-      return "#{LOCALPATH}/#{path.gsub('/', '.')}"
-    end
-
-    def check(path)
-      return File.exist?(path)
-    end
-
-    def redirect(env)
-      href = "#{ENDPOINT}#{env['PATH_INFO']}"
-      return [ 303 , {
-        'Location' => href,
-        'Access-Control-Allow-Origin' => '*',
-      }, [] ]
-    end
-
-    lambda do |env|
-      path = fn(env['PATH_INFO'])
-
-      if check(path)
-        return redirect(env)
-      end
-
-      H2O.next.call(env)
-      fh = File.open(path, 'w')
-      fh.close()
-
-      return redirect(env)
-    end
-  '';
 in {
   listen = { port = 8080; };
 
@@ -113,8 +78,11 @@ in {
         "/fileserver" = [
           { "mruby.handler" = acl; }
           { "mruby.handler" = rewrite; }
-          { "mruby.handler" = redirect; }
-          { "proxy.reverse.url" = "${upstream}/fileserver"; }
+          {
+            "header.add" = [ "Access-Control-Allow-Origin: *" ];
+            "file.dir" = "/data/media";
+            "proxy.reverse.url" = "${upstream}/fileserver";
+          }
         ];
       };
     };
