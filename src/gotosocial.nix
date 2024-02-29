@@ -29,7 +29,7 @@
 
   # accounts
   accounts-registration-open = false;
-  accounts-allow-custom-css = false;
+  accounts-allow-custom-css = true;
 
   # media
   media-remote-cache-days = 0;
