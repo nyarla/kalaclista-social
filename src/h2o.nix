@@ -70,7 +70,10 @@ in {
         "/assets" = [
           { "mruby.handler" = acl; }
           { "mruby.handler" = rewrite; }
-          { "file.dir" = "/web/www/assets"; }
+          {
+            "file.dir" = "/web/www/assets";
+            "header.set" = [ "Access-Control-Allow-Origin: *" ];
+          }
         ];
 
         "/api/v1/streaming" = [{
@@ -85,7 +88,7 @@ in {
           { "mruby.handler" = acl; }
           { "mruby.handler" = rewrite; }
           {
-            "header.add" = [ "Access-Control-Allow-Origin: *" ];
+            "header.set" = [ "Access-Control-Allow-Origin: *" ];
             "file.dir" = "/data/media";
             "proxy.reverse.url" = "${upstream}/fileserver";
           }
