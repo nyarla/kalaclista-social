@@ -1,0 +1,17 @@
+User-agent: *
+Disallow: /.well-known/
+Disallow: /@nyarla/
+Disallow: /about/suspended
+Disallow: /account_disabled
+Disallow: /admin
+Disallow: /api/
+Disallow: /auth/
+Disallow: /check_your_email
+Disallow: /emoji/
+Disallow: /fileserver/
+Disallow: /oauth/
+Disallow: /settings/
+Disallow: /user
+Disallow: /users/
+Disallow: /wait_for_approval
+Allow: /ads.txt
