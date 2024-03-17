@@ -1,7 +1,7 @@
 # shoreman
 FROM alpine:3.19 as shoreman
 
-RUN mkdir -p /app/bin
+RUN mkdir -p /opt/bin
 WORKDIR /
 
 ARG GITHUB_SHOREMAN_URL="https://raw.githubusercontent.com/chrismytton/shoreman/master/shoreman.sh"
@@ -9,15 +9,15 @@ ARG GITHUB_SHOREMAN_SHA256="a21acce3072bb8594565094e4a9bbafd3b9d7fa04abd7e0c74c1
 
 RUN apk add --update --no-cache --virtual shoreman curl coreutils \
   \
-  && curl -o /app/bin/shoreman "${GITHUB_SHOREMAN_URL}" \
-  && test "$(sha256sum /app/bin/shoreman | cut -d ' ' -f 1)" = "${GITHUB_SHOREMAN_SHA256}" \
-  && chmod -R +x /app/bin \
+  && curl -o /opt/bin/shoreman "${GITHUB_SHOREMAN_URL}" \
+  && test "$(sha256sum /opt/bin/shoreman | cut -d ' ' -f 1)" = "${GITHUB_SHOREMAN_SHA256}" \
+  && chmod -R +x /opt/bin \
   && apk del --purge shoreman
 
 # litestream
 FROM golang:1.21.8-alpine as litestream
 
-RUN mkdir -p /app/bin
+RUN mkdir -p /opt/bin
 WORKDIR /
 
 ARG GITHUB_LITESTREAM_OWNER=benbjohnson
@@ -40,7 +40,7 @@ RUN apk add --update --no-cache --virtual litestream-build \
       -trimpath -v \
       -ldflags "-X 'main.Version=${GITHUB_LITESTREAM_VERSION}' -s -w -extldflags '-static' -buildid=" \
       -tags osusergo,netgo,sqlite_omit_load_extension \
-      -o /app/bin/litestream ./cmd/litestream \
+      -o /opt/bin/litestream ./cmd/litestream \
     \
     && apk del --purge litestream-build \
     && cd / && rm -rf /src /root
@@ -48,7 +48,7 @@ RUN apk add --update --no-cache --virtual litestream-build \
 # h2o
 FROM alpine:3.19 as h2o
 
-RUN mkdir -p /app
+RUN mkdir -p /opt
 WORKDIR /
 
 ARG GITHUB_H2O_OWNER=h2o
@@ -80,9 +80,9 @@ RUN apk add --update --no-cache --virtual h2o-build \
   && mkdir -p build && cd build \
   && cmake .. \
     -DCMAKE_BUILD_TYPE=Release \
-    -DCMAKE_INSTALL_PREFIX=/app \
+    -DCMAKE_INSTALL_PREFIX=/opt \
     -DWITH_MRUBY=ON \
-  && make && make install && chmod -R -w /app \
+  && make && make install && chmod -R -w /opt \
   \
   && apk del --purge h2o-build \
   && cd / && rm -rf /src /root
@@ -90,7 +90,7 @@ RUN apk add --update --no-cache --virtual h2o-build \
 # gotosocial
 FROM golang:1.21.8-alpine as gotosocial
 
-RUN mkdir -p /app/bin /web/www
+RUN mkdir -p /opt/bin /web/www
 WORKDIR /
 
 ARG GITHUB_GOTOSOCIAL_OWNER=superseriousbusiness
@@ -119,7 +119,7 @@ RUN apk add --update --no-cache --virtual gotosocial-build \
   && cd .. \
   \
   && VERSION=${GITHUB_GOTOSOCIAL_VERSION} ./scripts/build.sh \
-  && cp gotosocial /app/bin/gotosocial \
+  && cp gotosocial /opt/bin/gotosocial \
   \
   && apk del --purge gotosocial-build \
   && cd / && rm -rf /src /root
@@ -130,23 +130,23 @@ FROM alpine:3.19 as runtime
 RUN apk add --update --no-cache ca-certificates openssl bash
 WORKDIR /
 
-COPY --from=h2o /app /app
-COPY --from=shoreman --chmod=0500 /app/bin/shoreman /app/bin/
-COPY --from=litestream --chmod=0500 /app/bin/litestream /app/bin/
-COPY --from=gotosocial --chmod=0500 /app/bin/gotosocial /app/bin/
+COPY --from=h2o /opt /opt
+COPY --from=shoreman --chmod=0500 /opt/bin/shoreman /opt/bin/
+COPY --from=litestream --chmod=0500 /opt/bin/litestream /opt/bin/
+COPY --from=gotosocial --chmod=0500 /opt/bin/gotosocial /opt/bin/
 
 COPY --from=gotosocial /web /web
 COPY web/ /web/
 RUN chown -R nobody:nobody /web && chmod -R -w /web
 
-WORKDIR /var/run/kalaclista
-COPY --chmod=0400 runtime/Procfile /var/run/kalaclista/Procfile
-COPY --chmod=0400 runtime/h2o.json /var/run/kalaclista/h2o.conf
-COPY --chmod=0400 runtime/litestream.json /var/run/kalaclista/litestream.yml
-COPY --chmod=0400 runtime/gotosocial.json /var/run/kalaclista/gotosocial.yml
+WORKDIR /var/lib/kalaclista
+COPY --chmod=0400 runtime/Procfile /var/lib/kalaclista/Procfile
+COPY --chmod=0400 runtime/h2o.json /var/lib/kalaclista/h2o.conf
+COPY --chmod=0400 runtime/litestream.json /var/lib/kalaclista/litestream.yml
+COPY --chmod=0400 runtime/gotosocial.json /var/lib/kalaclista/gotosocial.yml
 
 RUN mkdir -p /data
-ENV PATH /app/bin:$PATH
+ENV PATH /opt/bin:$PATH
 ENV GODEBUG=madvdontneed=1
 
-ENTRYPOINT ["/app/bin/shoreman", "Procfile"]
+ENTRYPOINT ["/opt/bin/shoreman", "Procfile"]
