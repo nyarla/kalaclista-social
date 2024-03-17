@@ -1,5 +1,5 @@
 # shoreman
-FROM alpine as shoreman
+FROM alpine:3.19 as shoreman
 
 RUN mkdir -p /app/bin
 WORKDIR /
@@ -15,7 +15,7 @@ RUN apk add --update --no-cache --virtual shoreman curl coreutils \
   && apk del --purge shoreman
 
 # litestream
-FROM golang:1.21.3-alpine as litestream
+FROM golang:1.21.8-alpine as litestream
 
 RUN mkdir -p /app/bin
 WORKDIR /
@@ -46,7 +46,7 @@ RUN apk add --update --no-cache --virtual litestream-build \
     && cd / && rm -rf /src /root
 
 # h2o
-FROM alpine:edge as h2o
+FROM alpine:3.19 as h2o
 
 RUN mkdir -p /app
 WORKDIR /
@@ -88,7 +88,7 @@ RUN apk add --update --no-cache --virtual h2o-build \
   && cd / && rm -rf /src /root
 
 # gotosocial
-FROM golang:1.21.3-alpine as gotosocial
+FROM golang:1.21.8-alpine as gotosocial
 
 RUN mkdir -p /app/bin /web/www
 WORKDIR /
@@ -125,7 +125,7 @@ RUN apk add --update --no-cache --virtual gotosocial-build \
   && cd / && rm -rf /src /root
 
 # runtime
-FROM alpine as runtime
+FROM alpine:3.19 as runtime
 
 RUN apk add --update --no-cache ca-certificates openssl bash
 WORKDIR /
