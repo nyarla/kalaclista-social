@@ -11,7 +11,10 @@
   bind-address = "127.0.0.1";
   port = 9080;
 
-  trusted-proxies = [ "127.0.0.1" "172.16.0.0/12" ];
+  trusted-proxies = [
+    "127.0.0.1"
+    "172.16.0.0/12"
+  ];
 
   # db
   db-type = "sqlite";
@@ -32,15 +35,18 @@
   accounts-allow-custom-css = true;
 
   # media
-  media-remote-cache-days = 0;
+  media-remote-cache-days = 7;
 
   # storage
   storage-backend = "local";
   storage-local-base-path = "/data/media";
 
   # http-client
-  http-client = { timeout = "5s"; };
+  http-client = {
+    timeout = "10s";
+  };
 
   # modded version
   kalaclista-allowed-unauthorized-get = true;
+  kalaclista-keep-emojis-forever = true;
 }
