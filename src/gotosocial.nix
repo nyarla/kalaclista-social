@@ -35,15 +35,17 @@
   accounts-allow-custom-css = true;
 
   # media
+  media-emoji-remote-max-size = "200KiB";
   media-remote-cache-days = 7;
 
   # storage
-  storage-backend = "local";
+  storage-backend = "s3";
   storage-local-base-path = "/data/media";
+  storage-s3-proxy = true;
 
   # http-client
   http-client = {
-    timeout = "10s";
+    timeout = "5s";
   };
 
   # modded version
