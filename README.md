@@ -1,6 +1,6 @@
 # kalaclista-social
 
-The deployment toolkit to fly.io with shoreman, litestream, h2o and gotosocial for my fediverse instance.
+The deployment toolkit to fly.io with goreman, litestream, h2o and gotosocial for my fediverse instance.
 
 ## How to using that
 
@@ -10,7 +10,7 @@ You could build the docker container as these commands:
 
 ```bash
 # generates the software configurations.
-# thses commands requires `nix` with experimental features.
+# these commands requires `nix` with experimental features.
 $ nix eval --json --file src/h2o.nix >runtime/h2o.json
 $ nix eval --json --file src/gotosocial.nix >runtime/gotosocial.json
 $ nix eval --json --file src/litestream.nix >runtime/litestream.json
@@ -31,6 +31,11 @@ Naming rules as:
 As current exists:
 
 ```
+GITHUB_GOREMAN_OWNER=mattn
+GITHUB_GOREMAN_REPOSITORY=goreman
+GITHUB_GOREMAN_REVISION=ebb9736b7c7f7f3425280ab69e1f7989fb34eadc
+GITHUB_GOREMAN_VERSION=0.3.15
+
 GITHUB_SHOREMAN_URL="https://raw.githubusercontent.com/chrismytton/shoreman/master/shoreman.sh"
 GITHUB_SHOREMAN_SHA256="a21acce3072bb8594565094e4a9bbafd3b9d7fa04abd7e0c74c19fd479adb817"
 

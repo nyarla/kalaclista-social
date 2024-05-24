@@ -1,18 +1,34 @@
-# shoreman
-FROM alpine:3.19 as shoreman
+# litestream
+FROM golang:1.21.8-alpine as goreman
 
 RUN mkdir -p /opt/bin
 WORKDIR /
 
-ARG GITHUB_SHOREMAN_URL="https://raw.githubusercontent.com/chrismytton/shoreman/master/shoreman.sh"
-ARG GITHUB_SHOREMAN_SHA256="a21acce3072bb8594565094e4a9bbafd3b9d7fa04abd7e0c74c19fd479adb817"
+ARG GITHUB_GOREMAN_OWNER=mattn
+ARG GITHUB_GOREMAN_REPOSITORY=goreman
+ARG GITHUB_GOREMAN_REVISION=ebb9736b7c7f7f3425280ab69e1f7989fb34eadc
+ARG GITHUB_GOREMAN_VERSION=0.3.15
 
-RUN apk add --update --no-cache --virtual shoreman curl coreutils \
-  \
-  && curl -o /opt/bin/shoreman "${GITHUB_SHOREMAN_URL}" \
-  && test "$(sha256sum /opt/bin/shoreman | cut -d ' ' -f 1)" = "${GITHUB_SHOREMAN_SHA256}" \
-  && chmod -R +x /opt/bin \
-  && apk del --purge shoreman
+RUN apk add --update --no-cache --virtual goreman-build \
+      build-base \
+      git \
+    \
+    && mkdir -p /src && cd /src \
+    \
+    && git init \
+    && git remote add origin https://github.com/${GITHUB_GOREMAN_OWNER}/${GITHUB_GOREMAN_REPOSITORY}.git \
+    && git fetch --depth 1 origin ${GITHUB_GOREMAN_REVISION} \
+    && git reset --hard ${GITHUB_GOREMAN_REVISION} \
+    \
+    && go build \
+      -trimpath -v \
+      -ldflags "-X 'main.Version=${GITHUB_GOREMAN_VERSION}' -s -w -extldflags '-static' -buildid=" \
+      -o /opt/bin/goreman . \
+    \
+    && apk del --purge goreman-build \
+    && cd / && rm -rf /src /root
+
+
 
 # litestream
 FROM golang:1.21.8-alpine as litestream
@@ -131,7 +147,7 @@ RUN apk add --update --no-cache ca-certificates openssl bash
 WORKDIR /
 
 COPY --from=h2o /opt /opt
-COPY --from=shoreman --chmod=0500 /opt/bin/shoreman /opt/bin/
+COPY --from=goreman --chmod=0500 /opt/bin/goreman /opt/bin/
 COPY --from=litestream --chmod=0500 /opt/bin/litestream /opt/bin/
 COPY --from=gotosocial --chmod=0500 /opt/bin/gotosocial /opt/bin/
 
@@ -149,4 +165,4 @@ RUN mkdir -p /data
 ENV PATH /opt/bin:$PATH
 ENV GODEBUG=madvdontneed=1
 
-ENTRYPOINT ["/opt/bin/shoreman", "Procfile"]
+ENTRYPOINT ["/opt/bin/goreman", "start"]
