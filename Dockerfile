@@ -1,5 +1,5 @@
 # litestream
-FROM golang:1.21.8-alpine as goreman
+FROM golang:1.22-alpine as goreman
 
 RUN mkdir -p /opt/bin
 WORKDIR /
@@ -31,7 +31,7 @@ RUN apk add --update --no-cache --virtual goreman-build \
 
 
 # litestream
-FROM golang:1.21.8-alpine as litestream
+FROM golang:1.22-alpine as litestream
 
 RUN mkdir -p /opt/bin
 WORKDIR /
@@ -62,14 +62,14 @@ RUN apk add --update --no-cache --virtual litestream-build \
     && cd / && rm -rf /src /root
 
 # h2o
-FROM alpine:3.19 as h2o
+FROM alpine:3.20 as h2o
 
 RUN mkdir -p /opt
 WORKDIR /
 
 ARG GITHUB_H2O_OWNER=h2o
 ARG GITHUB_H2O_REPOSITORY=h2o
-ARG GITHUB_H2O_REVISION=40422536fbf7f834da1e312058aa51db3a191c29
+ARG GITHUB_H2O_REVISION=16b13eee8ad7895b4fe3fcbcabee53bd52782562
 
 RUN apk add --update --no-cache --virtual h2o-build \
       bison \
@@ -104,15 +104,15 @@ RUN apk add --update --no-cache --virtual h2o-build \
   && cd / && rm -rf /src /root
 
 # gotosocial
-FROM golang:1.21.8-alpine as gotosocial
+FROM golang:1.22-alpine as gotosocial
 
 RUN mkdir -p /opt/bin /web/www
 WORKDIR /
 
 ARG GITHUB_GOTOSOCIAL_OWNER=superseriousbusiness
 ARG GITHUB_GOTOSOCIAL_REPOSITORY=gotosocial
-ARG GITHUB_GOTOSOCIAL_REVISION=15733cddb22de81475d1934be100cd3960668c43
-ARG GITHUB_GOTOSOCIAL_VERSION=v0.15.0
+ARG GITHUB_GOTOSOCIAL_REVISION=f1cbf6fb761670e10eb8e3fecdc57578733186a1
+ARG GITHUB_GOTOSOCIAL_VERSION=v0.16.0
 
 RUN apk add --update --no-cache --virtual gotosocial-build \
   \
@@ -141,7 +141,7 @@ RUN apk add --update --no-cache --virtual gotosocial-build \
   && cd / && rm -rf /src /root
 
 # runtime
-FROM alpine:3.19 as runtime
+FROM alpine:3.20 as runtime
 
 RUN apk add --update --no-cache ca-certificates openssl bash
 WORKDIR /
