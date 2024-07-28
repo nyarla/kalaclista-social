@@ -27,35 +27,6 @@ let
       return H2O.next.call(env)
     end
   '';
-
-  media = upstream: ''
-    lambda do |env|
-      r2 = H2O.next.call(env)
-      if 200 <= r2[0] && r2[0] <= 399
-        return r2
-      end
-
-      headers = {}
-      env.each do |k, v|
-        if /^HTTP_/.match(k)
-          key = $'.split('_').collect(&:capitalize).join('-')
-          headers[key] = v
-        end
-      end
-
-      gts = http_request("${upstream}/fileserver#{env['PATH_INFO']}", {
-        method:   env['REQUEST_METHOD'],
-        headers:  headers,
-        body:     (env['rack.input'] ? env['rack.input'] : ""),
-      }).join
-
-      if 500 <= r2[0] && r2[0] <= 599
-        return gts
-      end
-
-      return H2O.next.call(env)
-    end
-  '';
 in
 {
   listen = {
@@ -90,7 +61,6 @@ in
       paths =
         let
           upstream = "http://127.0.0.1:9080";
-          secrets = import ./secrets.nix;
         in
         {
           "/" = [
@@ -123,13 +93,6 @@ in
               "proxy.timeout.keepalive" = 0;
               "proxy.timeout.io" = 31536000;
             }
-          ];
-
-          "/fileserver" = [
-            { "mruby.handler" = acl; }
-            { "mruby.handler" = rewrite; }
-            { "mruby.handler" = media upstream; }
-            { "proxy.reverse.url" = secrets.r2.endpoint; }
           ];
         };
     };
