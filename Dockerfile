@@ -156,10 +156,13 @@ COPY web/ /web/
 RUN chown -R nobody:nobody /web && chmod -R -w /web
 
 WORKDIR /var/lib/kalaclista
+
 COPY --chmod=0400 runtime/Procfile /var/lib/kalaclista/Procfile
-COPY --chmod=0400 runtime/h2o.json /var/lib/kalaclista/h2o.conf
-COPY --chmod=0400 runtime/litestream.json /var/lib/kalaclista/litestream.yml
+COPY --chmod=0755 runtime/start.sh /opt/bin/start
+
 COPY --chmod=0400 runtime/gotosocial.json /var/lib/kalaclista/gotosocial.yml
+COPY --chmod=0400 runtime/h2o.json /opt/etc/h2o.conf
+COPY --chmod=0400 runtime/litestream.json /etc/litestream.yml
 
 RUN mkdir -p /data
 ENV PATH /opt/bin:$PATH
