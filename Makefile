@@ -35,7 +35,7 @@ pull:
 	fly ssh sftp get /data/sqlite3.db data/sqlite3.db
 
 test:
-	docker run -it -p 8080:8080 --rm --entrypoint /bin/sh --mount type=bind,source=$(shell pwd)/media/root,target=/data/media kalaclista-social-v2_1:latest
+	docker run -it -p 8080:8080 --rm --entrypoint /busybox/sh kalaclista-social-v2_1:latest
 
 blocklist:
 	test -e src/tor.block || curl -L 'https://check.torproject.org/torbulkexitlist' | tr "\n" " " >src/tor.block
