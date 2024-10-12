@@ -73,6 +73,11 @@ in
             }
           ];
 
+          "/.well-known/nostr.json" = {
+            "file.file" = "/web/www/root/.well-known/nostr.json";
+            "header.set" = [ "Access-Control-Allow-Origin: *" ];
+          };
+
           "/assets" = [
             { "mruby.handler" = acl; }
             { "mruby.handler" = rewrite; }
