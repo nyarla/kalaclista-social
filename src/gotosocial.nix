@@ -29,6 +29,7 @@
   # instance
   instance-languages = [ "ja" ];
   instance-inject-mastodon-version = true;
+  instance-federation-spam-filter = true;
 
   # accounts
   accounts-registration-open = false;
