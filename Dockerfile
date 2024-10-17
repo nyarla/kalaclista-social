@@ -4,9 +4,10 @@ RUN   apt-get update \
   &&  apt-get install -y --no-install-recommends \
     build-essential=12.9 \
     cmake=3.25.1-1 \
-    git=1:2.39.2-1.1 \
-    libssl-dev=3.0.13-1~deb12u1 \
-    openssl=3.0.13-1~deb12u1 \
+    git=1:2.39.5-0+deb12u1 \
+    git-man=1:2.39.5-0+deb12u1 \
+    libssl-dev=3.0.14-1~deb12u2 \
+    openssl=3.0.14-1~deb12u2 \
     perl=5.36.0-7+deb12u1 \
     rake=13.0.6-3 \
     ruby-dev=1:3.1 \
