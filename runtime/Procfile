@@ -1,2 +1,0 @@
-h2o: while true; do /opt/bin/h2o ; done
-gotosocial: while true ; do /opt/bin/litestream replicate -exec "sh /opt/bin/start" ; done
