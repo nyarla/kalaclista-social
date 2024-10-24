@@ -39,3 +39,13 @@ test:
 
 blocklist:
 	test -e src/tor.block || curl -L 'https://check.torproject.org/torbulkexitlist' | tr "\n" " " >src/tor.block
+
+load:
+	nix-build && docker load < result
+
+run:
+	docker run -it -p 8080:8080 --rm --entrypoint /bin/sh kalaclista-social-v3:latest
+
+
+upload: load
+	flyctl deploy -a kalaclista-social-v2 --local-only --image kalaclista-social-v3:latest --image-label latest
