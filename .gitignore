@@ -1,7 +1,5 @@
 *
-!.dockerignore
 !.gitignore
-!Dockerfile
 !LICENSE
 !Makefile
 !README.md
