@@ -227,6 +227,7 @@ dockerTools.buildImage rec {
 
               @exists file
               handle @exists {
+                header /.well-known/nostr.json Access-Control-Allow-Origin "*"
                 file_server 
               }
 
