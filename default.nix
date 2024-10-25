@@ -199,9 +199,9 @@ dockerTools.buildImage rec {
             tty:x:5:
           '';
           procfile = pkgs.writeText "Procfile" ''
-            caddy: sh -c 'while true; do caddy run -c Caddyfile ; done'
-            gotosocial: sh -c 'while true; do gotosocial --config-path gotosocial.yaml server start ; done'
-            litestream: sh -c 'while true; do litestream replicate -config litestream.yaml ; done'
+            caddy: sh -c 'while true; do env GOMEMLIMIT=40MiB caddy run -c Caddyfile ; done'
+            gotosocial: sh -c 'while true; do env GOMEMLIMIT=256MiB GTS_WAZERO_COMPILATION_CACHE=/data/.wasm gotosocial --config-path gotosocial.yaml server start ; done'
+            litestream: sh -c 'while true; do env GOMEMLIMIT=60MiB litestream replicate -config litestream.yaml ; done'
           '';
 
           caddyfile = pkgs.writeText "Caddyfile" ''
