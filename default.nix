@@ -31,24 +31,12 @@ let
     {
       inherit src;
 
-      goreman = pkgsMusl.buildGo123Module rec {
-        pname = "goreman";
-        version = "git";
-        src = fetchFromGitHub {
-          owner = "mattn";
-          repo = "goreman";
-          rev = "ebb9736b7c7f7f3425280ab69e1f7989fb34eadc";
-          hash = "sha256-Z6b245tC6UsTaHTTlKEFH0egb5z8HTmv/554nkileng=";
-        };
-
-        vendorHash = "sha256-Qbi2GfBrVLFbH9SMZOd1JqvD/afkrVOjU4ECkFK+dFA=";
-
-        ldflags = go.ldflags ++ [
-          "-X main.Version=${src.rev}"
-        ];
-
-        inherit (go) tags;
-      };
+      shoreman = pkgs.writeScriptBin "shoreman" (
+        builtins.readFile (fetchurl {
+          url = "https://raw.githubusercontent.com/chrismytton/shoreman/f9687d6663074f747a29f6dcf0d392c2d39c425a/shoreman.sh";
+          sha256 = "05xqmmwx97y1fh67xgaal1zrsfzxpadllkh9cm2mkf1b0ziwq6m2";
+        })
+      );
 
       litestream = pkgsMusl.buildGo123Module rec {
         pname = "litestream";
@@ -166,6 +154,8 @@ let
       busybox = pkgsMusl.busybox.override {
         enableStatic = true;
       };
+
+      inherit (pkgsMusl) bash;
     };
 in
 
@@ -178,11 +168,12 @@ dockerTools.buildImage rec {
 
     paths =
       (with apps; [
+        bash
         busybox
         caddyserver
-        goreman
         gotosocial
         litestream
+        shoreman
       ])
       ++ [
         cacert
@@ -208,9 +199,9 @@ dockerTools.buildImage rec {
             tty:x:5:
           '';
           procfile = pkgs.writeText "Procfile" ''
-            caddy: while true; do /bin/caddy run -c /var/lib/kalaclista/Caddyfile ; done
-            gotosocial: while true; do /bin/gotosocial --config-path /var/lib/kalaclista/gotosocial.yaml server start ; done
-            litestream: while true; do /bin/litestream replicate -config /var/lib/kalaclista/litestream.yaml ; done
+            caddy: sh -c 'while true; do caddy run -c Caddyfile ; done'
+            gotosocial: sh -c 'while true; do gotosocial --config-path gotosocial.yaml server start ; done'
+            litestream: sh -c 'while true; do litestream replicate -config litestream.yaml ; done'
           '';
 
           caddyfile = pkgs.writeText "Caddyfile" ''
@@ -275,11 +266,12 @@ dockerTools.buildImage rec {
   };
 
   config = {
+    Env = [
+      "PATH=/bin"
+    ];
     WorkingDir = "/var/lib/kalaclista";
     Entrypoint = [
-      "/bin/sh"
-      "-c"
-      "goreman start"
+      "shoreman"
     ];
   };
 }
