@@ -11,6 +11,8 @@ load:
 run:
 	docker run -it -p 8080:8080 --rm --entrypoint /bin/sh kalaclista-social-v3:latest
 
-
 up: load
-	flyctl deploy -a kalaclista-social-v2 --local-only --image kalaclista-social-v3:latest --image-label latest
+	fly deploy -a kalaclista-social-v2 --local-only --image kalaclista-social-v3:latest --image-label latest
+
+ssh:
+	fly ssh console --pty -C /bin/sh
