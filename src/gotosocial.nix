@@ -21,6 +21,7 @@
   db-address = "/data/sqlite3.db";
   db-sqlite-journal-mode = "WAL";
   db-sqlite-synchronous = "NORMAL";
+  cache.memory-target = "50MiB";
 
   # web 
   web-template-base-dir = "/web/templates";
@@ -42,12 +43,19 @@
   # storage
   storage-backend = "s3";
   storage-local-base-path = "/data/media";
-  storage-s3-proxy = true;
+  storage-s3-proxy = false;
+  storage-s3-redirect-url = "https://gts.files.kalaclista.com";
 
   # http-client
   http-client = {
     timeout = "5s";
   };
+
+  # advanced
+  advanced-throttling-multiplier = 4;
+  advanced-csp-extra-uris = [
+    "gts.files.kalaclista.com"
+  ];
 
   # modded version
   kalaclista-allowed-unauthorized-get = true;
