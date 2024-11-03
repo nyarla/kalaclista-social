@@ -209,7 +209,7 @@ dockerTools.buildImage rec {
               auto_https off
             }
 
-            http://kalaclista-social-v2.fly.dev:8080 {
+            http://kalaclista-social-v3.fly.dev:8080 {
               redir https://kalaclista.com
             }
 
