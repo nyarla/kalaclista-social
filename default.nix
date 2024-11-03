@@ -24,8 +24,8 @@ let
       src = fetchFromGitHub {
         owner = "nyarla";
         repo = "gotosocial-modded";
-        rev = "73e1dd31670443779c3787ea919a8be26b935550";
-        hash = "sha256-6+/Hc/eTW0F/DpViIW7oVVeC3v0ARt+zQSx+r5JlpF4=";
+        rev = "6e9472b8f72c2a071aa3b3ff9b548351eae9f3fc";
+        hash = "sha256-xGnU+H4UhS0bbLYsWqYbU+fvHNjHEkELXekiW8nQ6sc=";
       };
     in
     {
